@@ -1,0 +1,160 @@
+
+model ReportDefinitions {
+  id        String    @id @default(uuid()) @db.Uuid
+  tenantId  String    @map("tenant_id") @db.Uuid
+  createdBy String?   @map("created_by") @db.Uuid
+  updatedBy String?   @map("updated_by") @db.Uuid
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  name String @db.VarChar(255)
+  code String? @db.VarChar(50)
+  status String @default("active") @db.VarChar(50)
+  metadata Json @default("{}")
+  @@index([tenantId])
+  @@map("report_definitions")
+}
+
+model ReportSchedules {
+  id        String    @id @default(uuid()) @db.Uuid
+  tenantId  String    @map("tenant_id") @db.Uuid
+  createdBy String?   @map("created_by") @db.Uuid
+  updatedBy String?   @map("updated_by") @db.Uuid
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  name String @db.VarChar(255)
+  code String? @db.VarChar(50)
+  status String @default("active") @db.VarChar(50)
+  metadata Json @default("{}")
+  @@index([tenantId])
+  @@map("report_schedules")
+}
+
+model ReportExecutions {
+  id        String    @id @default(uuid()) @db.Uuid
+  tenantId  String    @map("tenant_id") @db.Uuid
+  createdBy String?   @map("created_by") @db.Uuid
+  updatedBy String?   @map("updated_by") @db.Uuid
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  name String @db.VarChar(255)
+  code String? @db.VarChar(50)
+  status String @default("active") @db.VarChar(50)
+  metadata Json @default("{}")
+  @@index([tenantId])
+  @@map("report_executions")
+}
+
+model ReportExports {
+  id        String    @id @default(uuid()) @db.Uuid
+  tenantId  String    @map("tenant_id") @db.Uuid
+  createdBy String?   @map("created_by") @db.Uuid
+  updatedBy String?   @map("updated_by") @db.Uuid
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  name String @db.VarChar(255)
+  code String? @db.VarChar(50)
+  status String @default("active") @db.VarChar(50)
+  metadata Json @default("{}")
+  @@index([tenantId])
+  @@map("report_exports")
+}
+
+model DashboardWidgets {
+  id        String    @id @default(uuid()) @db.Uuid
+  tenantId  String    @map("tenant_id") @db.Uuid
+  createdBy String?   @map("created_by") @db.Uuid
+  updatedBy String?   @map("updated_by") @db.Uuid
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  name String @db.VarChar(255)
+  code String? @db.VarChar(50)
+  status String @default("active") @db.VarChar(50)
+  metadata Json @default("{}")
+  @@index([tenantId])
+  @@map("dashboard_widgets")
+}
+
+model DashboardConfigs {
+  id        String    @id @default(uuid()) @db.Uuid
+  tenantId  String    @map("tenant_id") @db.Uuid
+  createdBy String?   @map("created_by") @db.Uuid
+  updatedBy String?   @map("updated_by") @db.Uuid
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  name String @db.VarChar(255)
+  code String? @db.VarChar(50)
+  status String @default("active") @db.VarChar(50)
+  metadata Json @default("{}")
+  @@index([tenantId])
+  @@map("dashboard_configs")
+}
+
+model AnalyticsEvents {
+  id        String    @id @default(uuid()) @db.Uuid
+  tenantId  String    @map("tenant_id") @db.Uuid
+  createdBy String?   @map("created_by") @db.Uuid
+  updatedBy String?   @map("updated_by") @db.Uuid
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  name String @db.VarChar(255)
+  code String? @db.VarChar(50)
+  status String @default("active") @db.VarChar(50)
+  metadata Json @default("{}")
+  @@index([tenantId])
+  @@map("analytics_events")
+}
+
+model AnalyticsSessions {
+  id        String    @id @default(uuid()) @db.Uuid
+  tenantId  String    @map("tenant_id") @db.Uuid
+  createdBy String?   @map("created_by") @db.Uuid
+  updatedBy String?   @map("updated_by") @db.Uuid
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  name String @db.VarChar(255)
+  code String? @db.VarChar(50)
+  status String @default("active") @db.VarChar(50)
+  metadata Json @default("{}")
+  @@index([tenantId])
+  @@map("analytics_sessions")
+}
+
+model KpiDefinitions {
+  id        String    @id @default(uuid()) @db.Uuid
+  tenantId  String    @map("tenant_id") @db.Uuid
+  createdBy String?   @map("created_by") @db.Uuid
+  updatedBy String?   @map("updated_by") @db.Uuid
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  name String @db.VarChar(255)
+  code String? @db.VarChar(50)
+  status String @default("active") @db.VarChar(50)
+  metadata Json @default("{}")
+  @@index([tenantId])
+  @@map("kpi_definitions")
+}
+
+model KpiValues {
+  id        String    @id @default(uuid()) @db.Uuid
+  tenantId  String    @map("tenant_id") @db.Uuid
+  createdBy String?   @map("created_by") @db.Uuid
+  updatedBy String?   @map("updated_by") @db.Uuid
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  name String @db.VarChar(255)
+  code String? @db.VarChar(50)
+  status String @default("active") @db.VarChar(50)
+  metadata Json @default("{}")
+  @@index([tenantId])
+  @@map("kpi_values")
+}

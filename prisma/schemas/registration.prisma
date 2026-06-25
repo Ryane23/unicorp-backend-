@@ -1,0 +1,240 @@
+
+model Registrations {
+  id        String    @id @default(uuid()) @db.Uuid
+  tenantId  String    @map("tenant_id") @db.Uuid
+  createdBy String?   @map("created_by") @db.Uuid
+  updatedBy String?   @map("updated_by") @db.Uuid
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  name String @db.VarChar(255)
+  code String? @db.VarChar(50)
+  status String @default("active") @db.VarChar(50)
+  metadata Json @default("{}")
+  @@index([tenantId])
+  @@map("registrations")
+}
+
+model RegistrationCourses {
+  id        String    @id @default(uuid()) @db.Uuid
+  tenantId  String    @map("tenant_id") @db.Uuid
+  createdBy String?   @map("created_by") @db.Uuid
+  updatedBy String?   @map("updated_by") @db.Uuid
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  name String @db.VarChar(255)
+  code String? @db.VarChar(50)
+  status String @default("active") @db.VarChar(50)
+  metadata Json @default("{}")
+  @@index([tenantId])
+  @@map("registration_courses")
+}
+
+model RegistrationApprovals {
+  id        String    @id @default(uuid()) @db.Uuid
+  tenantId  String    @map("tenant_id") @db.Uuid
+  createdBy String?   @map("created_by") @db.Uuid
+  updatedBy String?   @map("updated_by") @db.Uuid
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  name String @db.VarChar(255)
+  code String? @db.VarChar(50)
+  status String @default("active") @db.VarChar(50)
+  metadata Json @default("{}")
+  @@index([tenantId])
+  @@map("registration_approvals")
+}
+
+model RegistrationWindows {
+  id        String    @id @default(uuid()) @db.Uuid
+  tenantId  String    @map("tenant_id") @db.Uuid
+  createdBy String?   @map("created_by") @db.Uuid
+  updatedBy String?   @map("updated_by") @db.Uuid
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  name String @db.VarChar(255)
+  code String? @db.VarChar(50)
+  status String @default("active") @db.VarChar(50)
+  metadata Json @default("{}")
+  @@index([tenantId])
+  @@map("registration_windows")
+}
+
+model RegistrationRules {
+  id        String    @id @default(uuid()) @db.Uuid
+  tenantId  String    @map("tenant_id") @db.Uuid
+  createdBy String?   @map("created_by") @db.Uuid
+  updatedBy String?   @map("updated_by") @db.Uuid
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  name String @db.VarChar(255)
+  code String? @db.VarChar(50)
+  status String @default("active") @db.VarChar(50)
+  metadata Json @default("{}")
+  @@index([tenantId])
+  @@map("registration_rules")
+}
+
+model RegistrationHolds {
+  id        String    @id @default(uuid()) @db.Uuid
+  tenantId  String    @map("tenant_id") @db.Uuid
+  createdBy String?   @map("created_by") @db.Uuid
+  updatedBy String?   @map("updated_by") @db.Uuid
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  name String @db.VarChar(255)
+  code String? @db.VarChar(50)
+  status String @default("active") @db.VarChar(50)
+  metadata Json @default("{}")
+  @@index([tenantId])
+  @@map("registration_holds")
+}
+
+model RegistrationExceptions {
+  id        String    @id @default(uuid()) @db.Uuid
+  tenantId  String    @map("tenant_id") @db.Uuid
+  createdBy String?   @map("created_by") @db.Uuid
+  updatedBy String?   @map("updated_by") @db.Uuid
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  name String @db.VarChar(255)
+  code String? @db.VarChar(50)
+  status String @default("active") @db.VarChar(50)
+  metadata Json @default("{}")
+  @@index([tenantId])
+  @@map("registration_exceptions")
+}
+
+model RegistrationWaitlists {
+  id        String    @id @default(uuid()) @db.Uuid
+  tenantId  String    @map("tenant_id") @db.Uuid
+  createdBy String?   @map("created_by") @db.Uuid
+  updatedBy String?   @map("updated_by") @db.Uuid
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  name String @db.VarChar(255)
+  code String? @db.VarChar(50)
+  status String @default("active") @db.VarChar(50)
+  metadata Json @default("{}")
+  @@index([tenantId])
+  @@map("registration_waitlists")
+}
+
+model AddDropRequests {
+  id        String    @id @default(uuid()) @db.Uuid
+  tenantId  String    @map("tenant_id") @db.Uuid
+  createdBy String?   @map("created_by") @db.Uuid
+  updatedBy String?   @map("updated_by") @db.Uuid
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  name String @db.VarChar(255)
+  code String? @db.VarChar(50)
+  status String @default("active") @db.VarChar(50)
+  metadata Json @default("{}")
+  @@index([tenantId])
+  @@map("add_drop_requests")
+}
+
+model CourseSwaps {
+  id        String    @id @default(uuid()) @db.Uuid
+  tenantId  String    @map("tenant_id") @db.Uuid
+  createdBy String?   @map("created_by") @db.Uuid
+  updatedBy String?   @map("updated_by") @db.Uuid
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  name String @db.VarChar(255)
+  code String? @db.VarChar(50)
+  status String @default("active") @db.VarChar(50)
+  metadata Json @default("{}")
+  @@index([tenantId])
+  @@map("course_swaps")
+}
+
+model RegistrationFees {
+  id        String    @id @default(uuid()) @db.Uuid
+  tenantId  String    @map("tenant_id") @db.Uuid
+  createdBy String?   @map("created_by") @db.Uuid
+  updatedBy String?   @map("updated_by") @db.Uuid
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  name String @db.VarChar(255)
+  code String? @db.VarChar(50)
+  status String @default("active") @db.VarChar(50)
+  metadata Json @default("{}")
+  @@index([tenantId])
+  @@map("registration_fees")
+}
+
+model RegistrationAudit {
+  id        String    @id @default(uuid()) @db.Uuid
+  tenantId  String    @map("tenant_id") @db.Uuid
+  createdBy String?   @map("created_by") @db.Uuid
+  updatedBy String?   @map("updated_by") @db.Uuid
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  name String @db.VarChar(255)
+  code String? @db.VarChar(50)
+  status String @default("active") @db.VarChar(50)
+  metadata Json @default("{}")
+  @@index([tenantId])
+  @@map("registration_audit")
+}
+
+model PrerequisiteWaivers {
+  id        String    @id @default(uuid()) @db.Uuid
+  tenantId  String    @map("tenant_id") @db.Uuid
+  createdBy String?   @map("created_by") @db.Uuid
+  updatedBy String?   @map("updated_by") @db.Uuid
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  name String @db.VarChar(255)
+  code String? @db.VarChar(50)
+  status String @default("active") @db.VarChar(50)
+  metadata Json @default("{}")
+  @@index([tenantId])
+  @@map("prerequisite_waivers")
+}
+
+model CreditOverloads {
+  id        String    @id @default(uuid()) @db.Uuid
+  tenantId  String    @map("tenant_id") @db.Uuid
+  createdBy String?   @map("created_by") @db.Uuid
+  updatedBy String?   @map("updated_by") @db.Uuid
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  name String @db.VarChar(255)
+  code String? @db.VarChar(50)
+  status String @default("active") @db.VarChar(50)
+  metadata Json @default("{}")
+  @@index([tenantId])
+  @@map("credit_overloads")
+}
+
+model RegistrationBlocks {
+  id        String    @id @default(uuid()) @db.Uuid
+  tenantId  String    @map("tenant_id") @db.Uuid
+  createdBy String?   @map("created_by") @db.Uuid
+  updatedBy String?   @map("updated_by") @db.Uuid
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  name String @db.VarChar(255)
+  code String? @db.VarChar(50)
+  status String @default("active") @db.VarChar(50)
+  metadata Json @default("{}")
+  @@index([tenantId])
+  @@map("registration_blocks")
+}

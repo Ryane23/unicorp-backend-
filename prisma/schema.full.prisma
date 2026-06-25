@@ -1,0 +1,1002 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["prismaSchemaFolder"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserStatus { ACTIVE INACTIVE SUSPENDED PENDING_VERIFICATION }
+enum Gender { MALE FEMALE OTHER PREFER_NOT_TO_SAY }
+enum ApplicationStatus { DRAFT SUBMITTED UNDER_REVIEW APPROVED REJECTED WAITLISTED }
+enum StudentStatus { ACTIVE INACTIVE GRADUATED WITHDRAWN SUSPENDED DEFERRED }
+enum RegistrationStatus { PENDING APPROVED REJECTED DROPPED }
+enum PaymentStatus { PENDING COMPLETED FAILED REFUNDED PARTIAL }
+enum ExamType { MIDTERM FINAL SUPPLEMENTARY QUIZ PRACTICAL }
+enum ResultStatus { DRAFT SUBMITTED MODERATED APPROVED PUBLISHED }
+enum EmploymentType { FULL_TIME PART_TIME CONTRACT INTERN ADJUNCT }
+enum LeaveStatus { PENDING APPROVED REJECTED CANCELLED }
+enum BorrowingStatus { ACTIVE RETURNED OVERDUE LOST }
+enum AllocationStatus { PENDING ALLOCATED CHECKED_IN CHECKED_OUT }
+enum NotificationChannel { EMAIL SMS PUSH IN_APP }
+enum AuditAction { CREATE UPDATE DELETE LOGIN LOGOUT EXPORT IMPORT }
+enum TenantStatus { ACTIVE SUSPENDED TRIAL EXPIRED }
+enum SemesterType { FIRST SECOND THIRD SUMMER }
+enum AttendanceStatus { PRESENT ABSENT LATE EXCUSED }
+enum TranscriptStatus { REQUESTED PROCESSING READY DELIVERED VERIFIED }}
+  action AuditAction
+  code String? @db.VarChar(50)
+  createdAt DateTime  @default(now()) @map("created_at")
+  createdBy String?   @map("created_by") @db.Uuid
+  deletedAt DateTime? @map("deleted_at")
+  domain String? @unique @db.VarChar(255)
+  email String @db.VarChar(255)
+  emailVerified Boolean @default(false) @map("email_verified")
+  entityId String? @map("entity_id") @db.Uuid
+  entityType String @map("entity_type") @db.VarChar(100)
+enum AllocationStatus { PENDING ALLOCATED CHECKED_IN CHECKED_OUT }
+enum ApplicationStatus { DRAFT SUBMITTED UNDER_REVIEW APPROVED REJECTED WAITLISTED }
+enum AttendanceStatus { PRESENT ABSENT LATE EXCUSED }
+enum AuditAction { CREATE UPDATE DELETE LOGIN LOGOUT EXPORT IMPORT }
+enum BorrowingStatus { ACTIVE RETURNED OVERDUE LOST }
+enum EmploymentType { FULL_TIME PART_TIME CONTRACT INTERN ADJUNCT }
+enum ExamType { MIDTERM FINAL SUPPLEMENTARY QUIZ PRACTICAL }
+enum Gender { MALE FEMALE OTHER PREFER_NOT_TO_SAY }
+enum LeaveStatus { PENDING APPROVED REJECTED CANCELLED }
+enum NotificationChannel { EMAIL SMS PUSH IN_APP }
+enum PaymentStatus { PENDING COMPLETED FAILED REFUNDED PARTIAL }
+enum RegistrationStatus { PENDING APPROVED REJECTED DROPPED }
+enum ResultStatus { DRAFT SUBMITTED MODERATED APPROVED PUBLISHED }
+enum SemesterType { FIRST SECOND THIRD SUMMER }
+enum StudentStatus { ACTIVE INACTIVE GRADUATED WITHDRAWN SUSPENDED DEFERRED }
+enum TenantStatus { ACTIVE SUSPENDED TRIAL EXPIRED }
+enum TranscriptStatus { REQUESTED PROCESSING READY DELIVERED VERIFIED }
+enum UserStatus { ACTIVE INACTIVE SUSPENDED PENDING_VERIFICATION }
+  firstName String @map("first_name") @db.VarChar(100)
+  id        String    @id @default(uuid()) @db.Uuid
+  @@index([tenantId])
+  ipAddress String? @map("ip_address") @db.VarChar(45)
+  lastName String @map("last_name") @db.VarChar(100)
+  @@map("academic_histories")
+  @@map("academic_years")
+  @@map("access_control_lists")
+  @@map("activity_logs")
+  @@map("add_drop_requests")
+  @@map("admission_cycles")
+  @@map("admission_decisions")
+  @@map("admission_letters")
+  @@map("admission_quotas")
+  @@map("admission_requirements")
+  @@map("allocations")
+  @@map("allowances")
+  @@map("analytics_events")
+  @@map("analytics_sessions")
+  @@map("announcements")
+  @@map("api_keys")
+  @@map("api_logs")
+  @@map("applicants")
+  @@map("application_documents")
+  @@map("application_fees")
+  @@map("application_form_fields")
+  @@map("application_forms")
+  @@map("application_interviews")
+  @@map("application_notes")
+  @@map("application_responses")
+  @@map("application_reviews")
+  @@map("applications")
+  @@map("application_status_history")
+  @@map("asset_assignments")
+  @@map("asset_audits")
+  @@map("asset_categories")
+  @@map("asset_depreciation")
+  @@map("asset_disposals")
+  @@map("asset_insurance")
+  @@map("asset_locations")
+  @@map("asset_maintenance")
+  @@map("assets")
+  @@map("asset_warranties")
+  @@map("assignment_grades")
+  @@map("assignment_rubrics")
+  @@map("assignments")
+  @@map("attendance_devices")
+  @@map("attendance_excuses")
+  @@map("attendance_notifications")
+  @@map("attendance_policies")
+  @@map("attendance_records")
+  @@map("attendance_reports")
+  @@map("attendance_sessions")
+  @@map("attendance_summaries")
+  @@map("audit_logs")
+  @@map("authors")
+  @@map("backup_logs")
+  @@map("bank_accounts")
+  @@map("bank_transactions")
+  @@map("bed_spaces")
+  @@map("biometric_attendance")
+  @@map("blocks")
+  @@map("bonus_records")
+  @@map("book_categories")
+  @@map("book_copies")
+  @@map("book_reservations")
+  @@map("books")
+  @@map("borrowings")
+  @@map("broadcast_messages")
+  @@map("budget_items")
+  @@map("budgets")
+  @@map("bursaries")
+  @@map("cafeteria_feedback")
+  @@map("cafeteria_inventory")
+  @@map("cafeteria_orders")
+  @@map("cafeteria_payments")
+  @@map("cafeteria_schedules")
+  @@map("cafeteria_suppliers")
+  @@map("campus_buildings")
+  @@map("campuses")
+  @@map("ca_scores")
+  @@map("change_requests")
+  @@map("chat_messages")
+  @@map("chat_rooms")
+  @@map("communication_channels")
+  @@map("communication_schedules")
+  @@map("compliance_records")
+  @@map("course_assessment_plans")
+  @@map("course_categories")
+  @@map("course_curriculum")
+  @@map("course_enrollments")
+  @@map("course_evaluations")
+  @@map("course_instructors")
+  @@map("course_learning_outcomes")
+  @@map("course_material_links")
+  @@map("course_materials")
+  @@map("course_modules")
+  @@map("course_offerings")
+  @@map("course_prerequisites")
+  @@map("courses")
+  @@map("course_schedules")
+  @@map("course_sections")
+  @@map("course_swaps")
+  @@map("course_syllabi")
+  @@map("course_tag_mappings")
+  @@map("course_tags")
+  @@map("course_waitlists")
+  @@map("credit_overloads")
+  @@map("credit_requirements")
+  @@map("currency_rates")
+  @@map("dashboard_configs")
+  @@map("dashboard_widgets")
+  @@map("data_exports")
+  @@map("data_imports")
+  @@map("deans_list")
+  @@map("deductions")
+  @@map("degree_classifications")
+  @@map("departments")
+  @@map("departments_staff")
+  @@map("digital_resources")
+  @@map("discounts")
+  @@map("discussion_forums")
+  @@map("document_access_logs")
+  @@map("document_approvals")
+  @@map("document_categories")
+  @@map("document_retention_policies")
+  @@map("documents")
+  @@map("document_shares")
+  @@map("document_signatures")
+  @@map("document_tags")
+  @@map("document_templates")
+  @@map("document_versions")
+  @@map("document_workflows")
+  @@map("drivers")
+  @@map("email_campaigns")
+  @@map("emails")
+  @@map("email_templates")
+  @@map("email_verifications")
+  @@map("emergency_contacts")
+  @@map("employees")
+  @@map("employment_histories")
+  @@map("entrance_exam_results")
+  @@map("entrance_exams")
+  @@map("error_logs")
+  @@map("event_attendance")
+  @@map("event_categories")
+  @@map("event_feedback")
+  @@map("event_registrations")
+  @@map("events")
+  @@map("event_schedules")
+  @@map("event_speakers")
+  @@map("event_sponsors")
+  @@map("event_tickets")
+  @@map("event_venues")
+  @@map("exam_answer_sheets")
+  @@map("exam_attendance")
+  @@map("exam_checklists")
+  @@map("exam_incidents")
+  @@map("exam_malpractice")
+  @@map("exam_materials")
+  @@map("exam_papers")
+  @@map("exam_questions")
+  @@map("exam_results_raw")
+  @@map("exam_rooms")
+  @@map("exams")
+  @@map("exam_schedules")
+  @@map("exam_scores")
+  @@map("exam_seating_plans")
+  @@map("exam_statistics")
+  @@map("expense_categories")
+  @@map("expenses")
+  @@map("facial_recognition_logs")
+  @@map("faculties")
+  @@map("feature_flags")
+  @@map("fee_categories")
+  @@map("fee_structure_items")
+  @@map("fee_structures")
+  @@map("fee_waivers")
+  @@map("financial_aid")
+  @@map("financial_reports")
+  @@map("financial_transactions")
+  @@map("fines")
+  @@map("forum_moderation")
+  @@map("forum_posts")
+  @@map("forum_replies")
+  @@map("gdpr_requests")
+  @@map("geofence_attendance")
+  @@map("grade_components")
+  @@map("grade_point_mappings")
+  @@map("grade_scales")
+  @@map("graduation_lists")
+  @@map("guardians")
+  @@map("health_appointments")
+  @@map("health_facilities")
+  @@map("health_incidents")
+  @@map("health_medications")
+  @@map("health_prescriptions")
+  @@map("health_records")
+  @@map("health_referrals")
+  @@map("health_screenings")
+  @@map("health_staff")
+  @@map("health_vaccinations")
+  @@map("honor_roll")
+  @@map("hostel_applications")
+  @@map("hostel_checkouts")
+  @@map("hostel_fees")
+  @@map("hostel_incidents")
+  @@map("hostel_inspections")
+  @@map("hostel_inventory")
+  @@map("hostel_maintenance")
+  @@map("hostel_rules")
+  @@map("hostels")
+  @@map("hostel_transfers")
+  @@map("hostel_visitors")
+  @@map("installments")
+  @@map("institutions")
+  @@map("institution_settings")
+  @@map("integration_configs")
+  @@map("interlibrary_loans")
+  @@map("inventory_adjustments")
+  @@map("inventory_audits")
+  @@map("inventory_categories")
+  @@map("inventory_items")
+  @@map("inventory_locations")
+  @@map("inventory_orders")
+  @@map("inventory_receipts")
+  @@map("inventory_requisitions")
+  @@map("inventory_suppliers")
+  @@map("inventory_transactions")
+  @@map("invigilators")
+  @@map("invoice_items")
+  @@map("invoices")
+  @@map("job_applications")
+  @@map("job_positions")
+  @@map("journal_subscriptions")
+  @@map("kpi_definitions")
+  @@map("kpi_values")
+  @@map("leave_approvals")
+  @@map("leave_balances")
+  @@map("leave_requests")
+  @@map("leave_types")
+  @@map("lecture_halls")
+  @@map("lecturer_availability")
+  @@map("library_acquisitions")
+  @@map("library_cards")
+  @@map("library_events")
+  @@map("library_fines_payments")
+  @@map("library_inventory")
+  @@map("library_members")
+  @@map("library_sections")
+  @@map("library_shelves")
+  @@map("library_suppliers")
+  @@map("lms_announcements")
+  @@map("lms_calendar")
+  @@map("lms_certificates")
+  @@map("lms_group_members")
+  @@map("lms_groups")
+  @@map("lms_lessons")
+  @@map("lms_modules")
+  @@map("lms_peer_reviews")
+  @@map("lms_progress")
+  @@map("lms_resources")
+  @@map("lms_survey_responses")
+  @@map("lms_surveys")
+  @@map("lms_videos")
+  @@map("localization_strings")
+  @@map("login_attempts")
+  @@map("login_history")
+  @@map("maintenance_windows")
+  @@map("meal_plans")
+  @@map("meal_subscriptions")
+  @@map("menu_categories")
+  @@map("menu_items")
+  @@map("message_queues")
+  @@map("message_templates")
+  @@map("migration_logs")
+  @@map("moderations")
+  @@map("momo_transactions")
+  @@map("newsletter_subscriptions")
+  @@map("notification_logs")
+  @@map("notification_preferences")
+  @@map("number_sequences")
+  @@map("orange_money_transactions")
+  @@map("organizational_units")
+  @@map("otp_codes")
+  @@map("overtime_records")
+  @@map("password_resets")
+  @@map("payment_gateways")
+  @@map("payment_methods")
+  @@map("payment_plans")
+  @@map("payment_reconciliations")
+  @@map("payments")
+  @@map("payroll_adjustments")
+  @@map("payroll_approvals")
+  @@map("payroll_bank_transfers")
+  @@map("payroll_items")
+  @@map("payroll_periods")
+  @@map("payroll_runs")
+  @@map("payrolls")
+  @@map("pay_scales")
+  @@map("payslips")
+  @@map("pension_contributions")
+  @@map("performance_reviews")
+  @@map("permission_group_items")
+  @@map("permission_groups")
+  @@map("permissions")
+  @@map("policy_rules")
+  @@map("prerequisite_waivers")
+  @@map("programme_accreditations")
+  @@map("programme_options")
+  @@map("programmes")
+  @@map("publishers")
+  @@map("push_notifications")
+  @@map("qr_attendance")
+  @@map("quiz_answers")
+  @@map("quiz_attempts")
+  @@map("quiz_questions")
+  @@map("quizzes")
+  @@map("receipts")
+  @@map("refresh_tokens")
+  @@map("refunds")
+  @@map("registration_approvals")
+  @@map("registration_audit")
+  @@map("registration_blocks")
+  @@map("registration_courses")
+  @@map("registration_exceptions")
+  @@map("registration_fees")
+  @@map("registration_holds")
+  @@map("registration_rules")
+  @@map("registrations")
+  @@map("registration_waitlists")
+  @@map("registration_windows")
+  @@map("report_definitions")
+  @@map("report_executions")
+  @@map("report_exports")
+  @@map("report_schedules")
+  @@map("report_templates")
+  @@map("research_collaborations")
+  @@map("research_ethics")
+  @@map("research_funding")
+  @@map("research_grants")
+  @@map("research_milestones")
+  @@map("research_outputs")
+  @@map("research_projects")
+  @@map("research_publications")
+  @@map("research_students")
+  @@map("research_supervisors")
+  @@map("result_analytics")
+  @@map("result_appeals")
+  @@map("result_approvals")
+  @@map("result_batches")
+  @@map("result_computations")
+  @@map("result_corrections")
+  @@map("result_notifications")
+  @@map("results")
+  @@map("result_transcripts_cache")
+  @@map("returns")
+  @@map("revenue_records")
+  @@map("role_hierarchy")
+  @@map("role_permissions")
+  @@map("roles")
+  @@map("room_allocations")
+  @@map("room_availability")
+  @@map("rooms")
+  @@map("routes")
+  @@map("salary_grades")
+  @@map("salary_structures")
+  @@map("scheduled_jobs")
+  @@map("schedule_patterns")
+  @@map("schedules")
+  @@map("scholarship_applications")
+  @@map("scholarships")
+  @@map("security_questions")
+  @@map("semesters")
+  @@map("sessions")
+  @@map("sms_campaigns")
+  @@map("sms_messages")
+  @@map("staff_attendance")
+  @@map("staff_benefits")
+  @@map("staff_certifications")
+  @@map("staff_contracts")
+  @@map("staff_dependents")
+  @@map("staff_disciplinary")
+  @@map("staff_documents")
+  @@map("staff_offboarding")
+  @@map("staff_onboarding")
+  @@map("staff_promotions")
+  @@map("staff_qualifications")
+  @@map("staff_schedules")
+  @@map("staff_terminations")
+  @@map("staff_trainings")
+  @@map("staff_transfers")
+  @@map("stripe_customers")
+  @@map("student_achievements")
+  @@map("student_activities")
+  @@map("student_advisories")
+  @@map("student_alumni")
+  @@map("student_club_memberships")
+  @@map("student_clubs")
+  @@map("student_deferrals")
+  @@map("student_disciplinary_records")
+  @@map("student_documents")
+  @@map("student_health_records")
+  @@map("student_id_cards")
+  @@map("student_insurance")
+  @@map("student_leadership_roles")
+  @@map("student_mentorships")
+  @@map("student_portfolios")
+  @@map("student_profiles")
+  @@map("student_programme_changes")
+  @@map("student_reinstatements")
+  @@map("students")
+  @@map("student_statuses")
+  @@map("student_transfers")
+  @@map("student_withdrawals")
+  @@map("submissions")
+  @@map("supplementary_exams")
+  @@map("system_logs")
+  @@map("system_settings")
+  @@map("tax_deductions")
+  @@map("tax_rates")
+  @@map("tenant_billing")
+  @@map("tenant_domains")
+  @@map("tenants")
+  @@map("tenant_subscriptions")
+  @@map("themes")
+  @@map("time_slots")
+  @@map("timetable_approvals")
+  @@map("timetable_changes")
+  @@map("timetable_conflicts")
+  @@map("timetable_constraints")
+  @@map("timetable_exports")
+  @@map("timetables")
+  @@map("timetable_templates")
+  @@map("timetable_versions")
+  @@map("transcript_audit")
+  @@map("transcript_batches")
+  @@map("transcript_delivery")
+  @@map("transcript_fees")
+  @@map("transcript_requests")
+  @@map("transcripts")
+  @@map("transcript_signatures")
+  @@map("transcript_templates")
+  @@map("transcript_verifications")
+  @@map("transcript_watermarks")
+  @@map("transfer_credits")
+  @@map("transport_allocations")
+  @@map("transport_fees")
+  @@map("transport_incidents")
+  @@map("transport_maintenance")
+  @@map("transport_passes")
+  @@map("transport_schedules")
+  @@map("transport_tracking")
+  @@map("trusted_devices")
+  @@map("user_devices")
+  @@map("user_invitations")
+  @@map("user_permissions")
+  @@map("user_preferences")
+  @@map("user_profiles")
+  @@map("user_roles")
+  @@map("users")
+  @@map("user_security_answers")
+  @@map("vehicles")
+  @@map("webhook_endpoints")
+  @@map("webhook_logs")
+  maxStudents Int @default(50000) @map("max_students")
+  maxUsers Int @default(1000) @map("max_users")
+  metadata Json @default("{}")
+model AcademicHistories {
+model AcademicYears {
+model AccessControlLists {
+model ActivityLogs {
+model AddDropRequests {
+model AdmissionCycles {
+model AdmissionDecisions {
+model AdmissionLetters {
+model AdmissionQuotas {
+model AdmissionRequirements {
+model Allocations {
+model Allowances {
+model AnalyticsEvents {
+model AnalyticsSessions {
+model Announcements {
+model ApiKeys {
+model ApiLogs {
+model Applicants {
+model ApplicationDocuments {
+model ApplicationFees {
+model ApplicationFormFields {
+model ApplicationForms {
+model ApplicationInterviews {
+model ApplicationNotes {
+model ApplicationResponses {
+model ApplicationReviews {
+model Applications {
+model ApplicationStatusHistory {
+model AssetAssignments {
+model AssetAudits {
+model AssetCategories {
+model AssetDepreciation {
+model AssetDisposals {
+model AssetInsurance {
+model AssetLocations {
+model AssetMaintenance {
+model Assets {
+model AssetWarranties {
+model AssignmentGrades {
+model AssignmentRubrics {
+model Assignments {
+model AttendanceDevices {
+model AttendanceExcuses {
+model AttendanceNotifications {
+model AttendancePolicies {
+model AttendanceRecords {
+model AttendanceReports {
+model AttendanceSessions {
+model AttendanceSummaries {
+model AuditLogs {
+model Authors {
+model BackupLogs {
+model BankAccounts {
+model BankTransactions {
+model BedSpaces {
+model BiometricAttendance {
+model Blocks {
+model BonusRecords {
+model BookCategories {
+model BookCopies {
+model BookReservations {
+model Books {
+model Borrowings {
+model BroadcastMessages {
+model BudgetItems {
+model Budgets {
+model Bursaries {
+model CafeteriaFeedback {
+model CafeteriaInventory {
+model CafeteriaOrders {
+model CafeteriaPayments {
+model CafeteriaSchedules {
+model CafeteriaSuppliers {
+model CampusBuildings {
+model Campuses {
+model CaScores {
+model ChangeRequests {
+model ChatMessages {
+model ChatRooms {
+model CommunicationChannels {
+model CommunicationSchedules {
+model ComplianceRecords {
+model CourseAssessmentPlans {
+model CourseCategories {
+model CourseCurriculum {
+model CourseEnrollments {
+model CourseEvaluations {
+model CourseInstructors {
+model CourseLearningOutcomes {
+model CourseMaterialLinks {
+model CourseMaterials {
+model CourseModules {
+model CourseOfferings {
+model CoursePrerequisites {
+model Courses {
+model CourseSchedules {
+model CourseSections {
+model CourseSwaps {
+model CourseSyllabi {
+model CourseTagMappings {
+model CourseTags {
+model CourseWaitlists {
+model CreditOverloads {
+model CreditRequirements {
+model CurrencyRates {
+model DashboardConfigs {
+model DashboardWidgets {
+model DataExports {
+model DataImports {
+model DeansList {
+model Deductions {
+model DegreeClassifications {
+model Departments {
+model DepartmentsStaff {
+model DigitalResources {
+model Discounts {
+model DiscussionForums {
+model DocumentAccessLogs {
+model DocumentApprovals {
+model DocumentCategories {
+model DocumentRetentionPolicies {
+model Documents {
+model DocumentShares {
+model DocumentSignatures {
+model DocumentTags {
+model DocumentTemplates {
+model DocumentVersions {
+model DocumentWorkflows {
+model Drivers {
+model EmailCampaigns {
+model Emails {
+model EmailTemplates {
+model EmailVerifications {
+model EmergencyContacts {
+model Employees {
+model EmploymentHistories {
+model EntranceExamResults {
+model EntranceExams {
+model ErrorLogs {
+model EventAttendance {
+model EventCategories {
+model EventFeedback {
+model EventRegistrations {
+model Events {
+model EventSchedules {
+model EventSpeakers {
+model EventSponsors {
+model EventTickets {
+model EventVenues {
+model ExamAnswerSheets {
+model ExamAttendance {
+model ExamChecklists {
+model ExamIncidents {
+model ExamMalpractice {
+model ExamMaterials {
+model ExamPapers {
+model ExamQuestions {
+model ExamResultsRaw {
+model ExamRooms {
+model Exams {
+model ExamSchedules {
+model ExamScores {
+model ExamSeatingPlans {
+model ExamStatistics {
+model ExpenseCategories {
+model Expenses {
+model FacialRecognitionLogs {
+model Faculties {
+model FeatureFlags {
+model FeeCategories {
+model FeeStructureItems {
+model FeeStructures {
+model FeeWaivers {
+model FinancialAid {
+model FinancialReports {
+model FinancialTransactions {
+model Fines {
+model ForumModeration {
+model ForumPosts {
+model ForumReplies {
+model GdprRequests {
+model GeofenceAttendance {
+model GradeComponents {
+model GradePointMappings {
+model GradeScales {
+model GraduationLists {
+model Guardians {
+model HealthAppointments {
+model HealthFacilities {
+model HealthIncidents {
+model HealthMedications {
+model HealthPrescriptions {
+model HealthRecords {
+model HealthReferrals {
+model HealthScreenings {
+model HealthStaff {
+model HealthVaccinations {
+model HonorRoll {
+model HostelApplications {
+model HostelCheckouts {
+model HostelFees {
+model HostelIncidents {
+model HostelInspections {
+model HostelInventory {
+model HostelMaintenance {
+model HostelRules {
+model Hostels {
+model HostelTransfers {
+model HostelVisitors {
+model Installments {
+model Institutions {
+model InstitutionSettings {
+model IntegrationConfigs {
+model InterlibraryLoans {
+model InventoryAdjustments {
+model InventoryAudits {
+model InventoryCategories {
+model InventoryItems {
+model InventoryLocations {
+model InventoryOrders {
+model InventoryReceipts {
+model InventoryRequisitions {
+model InventorySuppliers {
+model InventoryTransactions {
+model Invigilators {
+model InvoiceItems {
+model Invoices {
+model JobApplications {
+model JobPositions {
+model JournalSubscriptions {
+model KpiDefinitions {
+model KpiValues {
+model LeaveApprovals {
+model LeaveBalances {
+model LeaveRequests {
+model LeaveTypes {
+model LectureHalls {
+model LecturerAvailability {
+model LibraryAcquisitions {
+model LibraryCards {
+model LibraryEvents {
+model LibraryFinesPayments {
+model LibraryInventory {
+model LibraryMembers {
+model LibrarySections {
+model LibraryShelves {
+model LibrarySuppliers {
+model LmsAnnouncements {
+model LmsCalendar {
+model LmsCertificates {
+model LmsGroupMembers {
+model LmsGroups {
+model LmsLessons {
+model LmsModules {
+model LmsPeerReviews {
+model LmsProgress {
+model LmsResources {
+model LmsSurveyResponses {
+model LmsSurveys {
+model LmsVideos {
+model LocalizationStrings {
+model LoginAttempts {
+model LoginHistory {
+model MaintenanceWindows {
+model MealPlans {
+model MealSubscriptions {
+model MenuCategories {
+model MenuItems {
+model MessageQueues {
+model MessageTemplates {
+model MigrationLogs {
+model Moderations {
+model MomoTransactions {
+model NewsletterSubscriptions {
+model NotificationLogs {
+model NotificationPreferences {
+model NumberSequences {
+model OrangeMoneyTransactions {
+model OrganizationalUnits {
+model OtpCodes {
+model OvertimeRecords {
+model PasswordResets {
+model PaymentGateways {
+model PaymentMethods {
+model PaymentPlans {
+model PaymentReconciliations {
+model Payments {
+model PayrollAdjustments {
+model PayrollApprovals {
+model PayrollBankTransfers {
+model PayrollItems {
+model PayrollPeriods {
+model PayrollRuns {
+model Payrolls {
+model PayScales {
+model Payslips {
+model PensionContributions {
+model PerformanceReviews {
+model PermissionGroupItems {
+model PermissionGroups {
+model Permissions {
+model PolicyRules {
+model PrerequisiteWaivers {
+model ProgrammeAccreditations {
+model ProgrammeOptions {
+model Programmes {
+model Publishers {
+model PushNotifications {
+model QrAttendance {
+model QuizAnswers {
+model QuizAttempts {
+model QuizQuestions {
+model Quizzes {
+model Receipts {
+model RefreshTokens {
+model Refunds {
+model RegistrationApprovals {
+model RegistrationAudit {
+model RegistrationBlocks {
+model RegistrationCourses {
+model RegistrationExceptions {
+model RegistrationFees {
+model RegistrationHolds {
+model RegistrationRules {
+model Registrations {
+model RegistrationWaitlists {
+model RegistrationWindows {
+model ReportDefinitions {
+model ReportExecutions {
+model ReportExports {
+model ReportSchedules {
+model ReportTemplates {
+model ResearchCollaborations {
+model ResearchEthics {
+model ResearchFunding {
+model ResearchGrants {
+model ResearchMilestones {
+model ResearchOutputs {
+model ResearchProjects {
+model ResearchPublications {
+model ResearchStudents {
+model ResearchSupervisors {
+model ResultAnalytics {
+model ResultAppeals {
+model ResultApprovals {
+model ResultBatches {
+model ResultComputations {
+model ResultCorrections {
+model ResultNotifications {
+model Results {
+model ResultTranscriptsCache {
+model Returns {
+model RevenueRecords {
+model RoleHierarchy {
+model RolePermissions {
+model Roles {
+model RoomAllocations {
+model RoomAvailability {
+model Rooms {
+model Routes {
+model SalaryGrades {
+model SalaryStructures {
+model ScheduledJobs {
+model SchedulePatterns {
+model Schedules {
+model ScholarshipApplications {
+model Scholarships {
+model SecurityQuestions {
+model Semesters {
+model Sessions {
+model SmsCampaigns {
+model SmsMessages {
+model StaffAttendance {
+model StaffBenefits {
+model StaffCertifications {
+model StaffContracts {
+model StaffDependents {
+model StaffDisciplinary {
+model StaffDocuments {
+model StaffOffboarding {
+model StaffOnboarding {
+model StaffPromotions {
+model StaffQualifications {
+model StaffSchedules {
+model StaffTerminations {
+model StaffTrainings {
+model StaffTransfers {
+model StripeCustomers {
+model StudentAchievements {
+model StudentActivities {
+model StudentAdvisories {
+model StudentAlumni {
+model StudentClubMemberships {
+model StudentClubs {
+model StudentDeferrals {
+model StudentDisciplinaryRecords {
+model StudentDocuments {
+model StudentHealthRecords {
+model StudentIdCards {
+model StudentInsurance {
+model StudentLeadershipRoles {
+model StudentMentorships {
+model StudentPortfolios {
+model StudentProfiles {
+model StudentProgrammeChanges {
+model StudentReinstatements {
+model Students {
+model StudentStatuses {
+model StudentTransfers {
+model StudentWithdrawals {
+model Submissions {
+model SupplementaryExams {
+model SystemLogs {
+model SystemSettings {
+model TaxDeductions {
+model TaxRates {
+model TenantBilling {
+model TenantDomains {
+model Tenants {
+model TenantSubscriptions {
+model Themes {
+model TimeSlots {
+model TimetableApprovals {
+model TimetableChanges {
+model TimetableConflicts {
+model TimetableConstraints {
+model TimetableExports {
+model Timetables {
+model TimetableTemplates {
+model TimetableVersions {
+model TranscriptAudit {
+model TranscriptBatches {
+model TranscriptDelivery {
+model TranscriptFees {
+model TranscriptRequests {
+model Transcripts {
+model TranscriptSignatures {
+model TranscriptTemplates {
+model TranscriptVerifications {
+model TranscriptWatermarks {
+model TransferCredits {
+model TransportAllocations {
+model TransportFees {
+model TransportIncidents {
+model TransportMaintenance {
+model TransportPasses {
+model TransportSchedules {
+model TransportTracking {
+model TrustedDevices {
+model UserDevices {
+model UserInvitations {
+model UserPermissions {
+model UserPreferences {
+model UserProfiles {
+model UserRoles {
+model Users {
+model UserSecurityAnswers {
+model Vehicles {
+model WebhookEndpoints {
+model WebhookLogs {
+  name String @db.VarChar(255)
+  newValue Json? @map("new_value")
+  oldValue Json? @map("old_value")
+  passwordHash String @map("password_hash") @db.VarChar(255)
+  programmeId String @map("programme_id") @db.Uuid
+  settings Json @default("{}")
+  slug String @unique @db.VarChar(100)
+  status String @default("active") @db.VarChar(50)
+  status StudentStatus @default(ACTIVE)
+  status TenantStatus @default(TRIAL)
+  status UserStatus @default(PENDING_VERIFICATION)
+  studentNo String @map("student_no") @db.VarChar(50)
+  tenantId  String    @map("tenant_id") @db.Uuid
+  twoFactorEnabled Boolean @default(false) @map("two_factor_enabled")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  updatedBy String?   @map("updated_by") @db.Uuid
+  userId String @map("user_id") @db.Uuid
+  userId String? @map("user_id") @db.Uuid

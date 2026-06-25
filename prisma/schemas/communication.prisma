@@ -1,0 +1,256 @@
+
+model Announcements {
+  id        String    @id @default(uuid()) @db.Uuid
+  tenantId  String    @map("tenant_id") @db.Uuid
+  createdBy String?   @map("created_by") @db.Uuid
+  updatedBy String?   @map("updated_by") @db.Uuid
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  name String @db.VarChar(255)
+  code String? @db.VarChar(50)
+  status String @default("active") @db.VarChar(50)
+  metadata Json @default("{}")
+  @@index([tenantId])
+  @@map("announcements")
+}
+
+model Emails {
+  id        String    @id @default(uuid()) @db.Uuid
+  tenantId  String    @map("tenant_id") @db.Uuid
+  createdBy String?   @map("created_by") @db.Uuid
+  updatedBy String?   @map("updated_by") @db.Uuid
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  name String @db.VarChar(255)
+  code String? @db.VarChar(50)
+  status String @default("active") @db.VarChar(50)
+  metadata Json @default("{}")
+  @@index([tenantId])
+  @@map("emails")
+}
+
+model SmsMessages {
+  id        String    @id @default(uuid()) @db.Uuid
+  tenantId  String    @map("tenant_id") @db.Uuid
+  createdBy String?   @map("created_by") @db.Uuid
+  updatedBy String?   @map("updated_by") @db.Uuid
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  name String @db.VarChar(255)
+  code String? @db.VarChar(50)
+  status String @default("active") @db.VarChar(50)
+  metadata Json @default("{}")
+  @@index([tenantId])
+  @@map("sms_messages")
+}
+
+model PushNotifications {
+  id        String    @id @default(uuid()) @db.Uuid
+  tenantId  String    @map("tenant_id") @db.Uuid
+  createdBy String?   @map("created_by") @db.Uuid
+  updatedBy String?   @map("updated_by") @db.Uuid
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  name String @db.VarChar(255)
+  code String? @db.VarChar(50)
+  status String @default("active") @db.VarChar(50)
+  metadata Json @default("{}")
+  @@index([tenantId])
+  @@map("push_notifications")
+}
+
+model MessageTemplates {
+  id        String    @id @default(uuid()) @db.Uuid
+  tenantId  String    @map("tenant_id") @db.Uuid
+  createdBy String?   @map("created_by") @db.Uuid
+  updatedBy String?   @map("updated_by") @db.Uuid
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  name String @db.VarChar(255)
+  code String? @db.VarChar(50)
+  status String @default("active") @db.VarChar(50)
+  metadata Json @default("{}")
+  @@index([tenantId])
+  @@map("message_templates")
+}
+
+model NotificationPreferences {
+  id        String    @id @default(uuid()) @db.Uuid
+  tenantId  String    @map("tenant_id") @db.Uuid
+  createdBy String?   @map("created_by") @db.Uuid
+  updatedBy String?   @map("updated_by") @db.Uuid
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  name String @db.VarChar(255)
+  code String? @db.VarChar(50)
+  status String @default("active") @db.VarChar(50)
+  metadata Json @default("{}")
+  @@index([tenantId])
+  @@map("notification_preferences")
+}
+
+model NotificationLogs {
+  id        String    @id @default(uuid()) @db.Uuid
+  tenantId  String    @map("tenant_id") @db.Uuid
+  createdBy String?   @map("created_by") @db.Uuid
+  updatedBy String?   @map("updated_by") @db.Uuid
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  name String @db.VarChar(255)
+  code String? @db.VarChar(50)
+  status String @default("active") @db.VarChar(50)
+  metadata Json @default("{}")
+  @@index([tenantId])
+  @@map("notification_logs")
+}
+
+model EmailCampaigns {
+  id        String    @id @default(uuid()) @db.Uuid
+  tenantId  String    @map("tenant_id") @db.Uuid
+  createdBy String?   @map("created_by") @db.Uuid
+  updatedBy String?   @map("updated_by") @db.Uuid
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  name String @db.VarChar(255)
+  code String? @db.VarChar(50)
+  status String @default("active") @db.VarChar(50)
+  metadata Json @default("{}")
+  @@index([tenantId])
+  @@map("email_campaigns")
+}
+
+model SmsCampaigns {
+  id        String    @id @default(uuid()) @db.Uuid
+  tenantId  String    @map("tenant_id") @db.Uuid
+  createdBy String?   @map("created_by") @db.Uuid
+  updatedBy String?   @map("updated_by") @db.Uuid
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  name String @db.VarChar(255)
+  code String? @db.VarChar(50)
+  status String @default("active") @db.VarChar(50)
+  metadata Json @default("{}")
+  @@index([tenantId])
+  @@map("sms_campaigns")
+}
+
+model BroadcastMessages {
+  id        String    @id @default(uuid()) @db.Uuid
+  tenantId  String    @map("tenant_id") @db.Uuid
+  createdBy String?   @map("created_by") @db.Uuid
+  updatedBy String?   @map("updated_by") @db.Uuid
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  name String @db.VarChar(255)
+  code String? @db.VarChar(50)
+  status String @default("active") @db.VarChar(50)
+  metadata Json @default("{}")
+  @@index([tenantId])
+  @@map("broadcast_messages")
+}
+
+model MessageQueues {
+  id        String    @id @default(uuid()) @db.Uuid
+  tenantId  String    @map("tenant_id") @db.Uuid
+  createdBy String?   @map("created_by") @db.Uuid
+  updatedBy String?   @map("updated_by") @db.Uuid
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  name String @db.VarChar(255)
+  code String? @db.VarChar(50)
+  status String @default("active") @db.VarChar(50)
+  metadata Json @default("{}")
+  @@index([tenantId])
+  @@map("message_queues")
+}
+
+model CommunicationChannels {
+  id        String    @id @default(uuid()) @db.Uuid
+  tenantId  String    @map("tenant_id") @db.Uuid
+  createdBy String?   @map("created_by") @db.Uuid
+  updatedBy String?   @map("updated_by") @db.Uuid
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  name String @db.VarChar(255)
+  code String? @db.VarChar(50)
+  status String @default("active") @db.VarChar(50)
+  metadata Json @default("{}")
+  @@index([tenantId])
+  @@map("communication_channels")
+}
+
+model NewsletterSubscriptions {
+  id        String    @id @default(uuid()) @db.Uuid
+  tenantId  String    @map("tenant_id") @db.Uuid
+  createdBy String?   @map("created_by") @db.Uuid
+  updatedBy String?   @map("updated_by") @db.Uuid
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  name String @db.VarChar(255)
+  code String? @db.VarChar(50)
+  status String @default("active") @db.VarChar(50)
+  metadata Json @default("{}")
+  @@index([tenantId])
+  @@map("newsletter_subscriptions")
+}
+
+model ChatRooms {
+  id        String    @id @default(uuid()) @db.Uuid
+  tenantId  String    @map("tenant_id") @db.Uuid
+  createdBy String?   @map("created_by") @db.Uuid
+  updatedBy String?   @map("updated_by") @db.Uuid
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  name String @db.VarChar(255)
+  code String? @db.VarChar(50)
+  status String @default("active") @db.VarChar(50)
+  metadata Json @default("{}")
+  @@index([tenantId])
+  @@map("chat_rooms")
+}
+
+model ChatMessages {
+  id        String    @id @default(uuid()) @db.Uuid
+  tenantId  String    @map("tenant_id") @db.Uuid
+  createdBy String?   @map("created_by") @db.Uuid
+  updatedBy String?   @map("updated_by") @db.Uuid
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  name String @db.VarChar(255)
+  code String? @db.VarChar(50)
+  status String @default("active") @db.VarChar(50)
+  metadata Json @default("{}")
+  @@index([tenantId])
+  @@map("chat_messages")
+}
+
+model CommunicationSchedules {
+  id        String    @id @default(uuid()) @db.Uuid
+  tenantId  String    @map("tenant_id") @db.Uuid
+  createdBy String?   @map("created_by") @db.Uuid
+  updatedBy String?   @map("updated_by") @db.Uuid
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  name String @db.VarChar(255)
+  code String? @db.VarChar(50)
+  status String @default("active") @db.VarChar(50)
+  metadata Json @default("{}")
+  @@index([tenantId])
+  @@map("communication_schedules")
+}

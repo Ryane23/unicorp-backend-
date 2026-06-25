@@ -1,0 +1,400 @@
+
+model Students {
+  id        String    @id @default(uuid()) @db.Uuid
+  tenantId  String    @map("tenant_id") @db.Uuid
+  createdBy String?   @map("created_by") @db.Uuid
+  updatedBy String?   @map("updated_by") @db.Uuid
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  userId String @map("user_id") @db.Uuid
+  studentNo String @map("student_no") @db.VarChar(50)
+  programmeId String @map("programme_id") @db.Uuid
+  status StudentStatus @default(ACTIVE)
+  @@index([tenantId])
+  @@map("students")
+}
+
+model StudentProfiles {
+  id        String    @id @default(uuid()) @db.Uuid
+  tenantId  String    @map("tenant_id") @db.Uuid
+  createdBy String?   @map("created_by") @db.Uuid
+  updatedBy String?   @map("updated_by") @db.Uuid
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  name String @db.VarChar(255)
+  code String? @db.VarChar(50)
+  status String @default("active") @db.VarChar(50)
+  metadata Json @default("{}")
+  @@index([tenantId])
+  @@map("student_profiles")
+}
+
+model Guardians {
+  id        String    @id @default(uuid()) @db.Uuid
+  tenantId  String    @map("tenant_id") @db.Uuid
+  createdBy String?   @map("created_by") @db.Uuid
+  updatedBy String?   @map("updated_by") @db.Uuid
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  name String @db.VarChar(255)
+  code String? @db.VarChar(50)
+  status String @default("active") @db.VarChar(50)
+  metadata Json @default("{}")
+  @@index([tenantId])
+  @@map("guardians")
+}
+
+model EmergencyContacts {
+  id        String    @id @default(uuid()) @db.Uuid
+  tenantId  String    @map("tenant_id") @db.Uuid
+  createdBy String?   @map("created_by") @db.Uuid
+  updatedBy String?   @map("updated_by") @db.Uuid
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  name String @db.VarChar(255)
+  code String? @db.VarChar(50)
+  status String @default("active") @db.VarChar(50)
+  metadata Json @default("{}")
+  @@index([tenantId])
+  @@map("emergency_contacts")
+}
+
+model StudentStatuses {
+  id        String    @id @default(uuid()) @db.Uuid
+  tenantId  String    @map("tenant_id") @db.Uuid
+  createdBy String?   @map("created_by") @db.Uuid
+  updatedBy String?   @map("updated_by") @db.Uuid
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  name String @db.VarChar(255)
+  code String? @db.VarChar(50)
+  status String @default("active") @db.VarChar(50)
+  metadata Json @default("{}")
+  @@index([tenantId])
+  @@map("student_statuses")
+}
+
+model StudentTransfers {
+  id        String    @id @default(uuid()) @db.Uuid
+  tenantId  String    @map("tenant_id") @db.Uuid
+  createdBy String?   @map("created_by") @db.Uuid
+  updatedBy String?   @map("updated_by") @db.Uuid
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  name String @db.VarChar(255)
+  code String? @db.VarChar(50)
+  status String @default("active") @db.VarChar(50)
+  metadata Json @default("{}")
+  @@index([tenantId])
+  @@map("student_transfers")
+}
+
+model StudentWithdrawals {
+  id        String    @id @default(uuid()) @db.Uuid
+  tenantId  String    @map("tenant_id") @db.Uuid
+  createdBy String?   @map("created_by") @db.Uuid
+  updatedBy String?   @map("updated_by") @db.Uuid
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  name String @db.VarChar(255)
+  code String? @db.VarChar(50)
+  status String @default("active") @db.VarChar(50)
+  metadata Json @default("{}")
+  @@index([tenantId])
+  @@map("student_withdrawals")
+}
+
+model AcademicHistories {
+  id        String    @id @default(uuid()) @db.Uuid
+  tenantId  String    @map("tenant_id") @db.Uuid
+  createdBy String?   @map("created_by") @db.Uuid
+  updatedBy String?   @map("updated_by") @db.Uuid
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  name String @db.VarChar(255)
+  code String? @db.VarChar(50)
+  status String @default("active") @db.VarChar(50)
+  metadata Json @default("{}")
+  @@index([tenantId])
+  @@map("academic_histories")
+}
+
+model StudentDocuments {
+  id        String    @id @default(uuid()) @db.Uuid
+  tenantId  String    @map("tenant_id") @db.Uuid
+  createdBy String?   @map("created_by") @db.Uuid
+  updatedBy String?   @map("updated_by") @db.Uuid
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  name String @db.VarChar(255)
+  code String? @db.VarChar(50)
+  status String @default("active") @db.VarChar(50)
+  metadata Json @default("{}")
+  @@index([tenantId])
+  @@map("student_documents")
+}
+
+model StudentIdCards {
+  id        String    @id @default(uuid()) @db.Uuid
+  tenantId  String    @map("tenant_id") @db.Uuid
+  createdBy String?   @map("created_by") @db.Uuid
+  updatedBy String?   @map("updated_by") @db.Uuid
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  name String @db.VarChar(255)
+  code String? @db.VarChar(50)
+  status String @default("active") @db.VarChar(50)
+  metadata Json @default("{}")
+  @@index([tenantId])
+  @@map("student_id_cards")
+}
+
+model StudentDisciplinaryRecords {
+  id        String    @id @default(uuid()) @db.Uuid
+  tenantId  String    @map("tenant_id") @db.Uuid
+  createdBy String?   @map("created_by") @db.Uuid
+  updatedBy String?   @map("updated_by") @db.Uuid
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  name String @db.VarChar(255)
+  code String? @db.VarChar(50)
+  status String @default("active") @db.VarChar(50)
+  metadata Json @default("{}")
+  @@index([tenantId])
+  @@map("student_disciplinary_records")
+}
+
+model StudentAchievements {
+  id        String    @id @default(uuid()) @db.Uuid
+  tenantId  String    @map("tenant_id") @db.Uuid
+  createdBy String?   @map("created_by") @db.Uuid
+  updatedBy String?   @map("updated_by") @db.Uuid
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  name String @db.VarChar(255)
+  code String? @db.VarChar(50)
+  status String @default("active") @db.VarChar(50)
+  metadata Json @default("{}")
+  @@index([tenantId])
+  @@map("student_achievements")
+}
+
+model StudentHealthRecords {
+  id        String    @id @default(uuid()) @db.Uuid
+  tenantId  String    @map("tenant_id") @db.Uuid
+  createdBy String?   @map("created_by") @db.Uuid
+  updatedBy String?   @map("updated_by") @db.Uuid
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  name String @db.VarChar(255)
+  code String? @db.VarChar(50)
+  status String @default("active") @db.VarChar(50)
+  metadata Json @default("{}")
+  @@index([tenantId])
+  @@map("student_health_records")
+}
+
+model StudentInsurance {
+  id        String    @id @default(uuid()) @db.Uuid
+  tenantId  String    @map("tenant_id") @db.Uuid
+  createdBy String?   @map("created_by") @db.Uuid
+  updatedBy String?   @map("updated_by") @db.Uuid
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  name String @db.VarChar(255)
+  code String? @db.VarChar(50)
+  status String @default("active") @db.VarChar(50)
+  metadata Json @default("{}")
+  @@index([tenantId])
+  @@map("student_insurance")
+}
+
+model StudentProgrammeChanges {
+  id        String    @id @default(uuid()) @db.Uuid
+  tenantId  String    @map("tenant_id") @db.Uuid
+  createdBy String?   @map("created_by") @db.Uuid
+  updatedBy String?   @map("updated_by") @db.Uuid
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  name String @db.VarChar(255)
+  code String? @db.VarChar(50)
+  status String @default("active") @db.VarChar(50)
+  metadata Json @default("{}")
+  @@index([tenantId])
+  @@map("student_programme_changes")
+}
+
+model StudentDeferrals {
+  id        String    @id @default(uuid()) @db.Uuid
+  tenantId  String    @map("tenant_id") @db.Uuid
+  createdBy String?   @map("created_by") @db.Uuid
+  updatedBy String?   @map("updated_by") @db.Uuid
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  name String @db.VarChar(255)
+  code String? @db.VarChar(50)
+  status String @default("active") @db.VarChar(50)
+  metadata Json @default("{}")
+  @@index([tenantId])
+  @@map("student_deferrals")
+}
+
+model StudentReinstatements {
+  id        String    @id @default(uuid()) @db.Uuid
+  tenantId  String    @map("tenant_id") @db.Uuid
+  createdBy String?   @map("created_by") @db.Uuid
+  updatedBy String?   @map("updated_by") @db.Uuid
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  name String @db.VarChar(255)
+  code String? @db.VarChar(50)
+  status String @default("active") @db.VarChar(50)
+  metadata Json @default("{}")
+  @@index([tenantId])
+  @@map("student_reinstatements")
+}
+
+model StudentAlumni {
+  id        String    @id @default(uuid()) @db.Uuid
+  tenantId  String    @map("tenant_id") @db.Uuid
+  createdBy String?   @map("created_by") @db.Uuid
+  updatedBy String?   @map("updated_by") @db.Uuid
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  name String @db.VarChar(255)
+  code String? @db.VarChar(50)
+  status String @default("active") @db.VarChar(50)
+  metadata Json @default("{}")
+  @@index([tenantId])
+  @@map("student_alumni")
+}
+
+model StudentMentorships {
+  id        String    @id @default(uuid()) @db.Uuid
+  tenantId  String    @map("tenant_id") @db.Uuid
+  createdBy String?   @map("created_by") @db.Uuid
+  updatedBy String?   @map("updated_by") @db.Uuid
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  name String @db.VarChar(255)
+  code String? @db.VarChar(50)
+  status String @default("active") @db.VarChar(50)
+  metadata Json @default("{}")
+  @@index([tenantId])
+  @@map("student_mentorships")
+}
+
+model StudentAdvisories {
+  id        String    @id @default(uuid()) @db.Uuid
+  tenantId  String    @map("tenant_id") @db.Uuid
+  createdBy String?   @map("created_by") @db.Uuid
+  updatedBy String?   @map("updated_by") @db.Uuid
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  name String @db.VarChar(255)
+  code String? @db.VarChar(50)
+  status String @default("active") @db.VarChar(50)
+  metadata Json @default("{}")
+  @@index([tenantId])
+  @@map("student_advisories")
+}
+
+model StudentPortfolios {
+  id        String    @id @default(uuid()) @db.Uuid
+  tenantId  String    @map("tenant_id") @db.Uuid
+  createdBy String?   @map("created_by") @db.Uuid
+  updatedBy String?   @map("updated_by") @db.Uuid
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  name String @db.VarChar(255)
+  code String? @db.VarChar(50)
+  status String @default("active") @db.VarChar(50)
+  metadata Json @default("{}")
+  @@index([tenantId])
+  @@map("student_portfolios")
+}
+
+model StudentActivities {
+  id        String    @id @default(uuid()) @db.Uuid
+  tenantId  String    @map("tenant_id") @db.Uuid
+  createdBy String?   @map("created_by") @db.Uuid
+  updatedBy String?   @map("updated_by") @db.Uuid
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  name String @db.VarChar(255)
+  code String? @db.VarChar(50)
+  status String @default("active") @db.VarChar(50)
+  metadata Json @default("{}")
+  @@index([tenantId])
+  @@map("student_activities")
+}
+
+model StudentClubs {
+  id        String    @id @default(uuid()) @db.Uuid
+  tenantId  String    @map("tenant_id") @db.Uuid
+  createdBy String?   @map("created_by") @db.Uuid
+  updatedBy String?   @map("updated_by") @db.Uuid
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  name String @db.VarChar(255)
+  code String? @db.VarChar(50)
+  status String @default("active") @db.VarChar(50)
+  metadata Json @default("{}")
+  @@index([tenantId])
+  @@map("student_clubs")
+}
+
+model StudentClubMemberships {
+  id        String    @id @default(uuid()) @db.Uuid
+  tenantId  String    @map("tenant_id") @db.Uuid
+  createdBy String?   @map("created_by") @db.Uuid
+  updatedBy String?   @map("updated_by") @db.Uuid
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  name String @db.VarChar(255)
+  code String? @db.VarChar(50)
+  status String @default("active") @db.VarChar(50)
+  metadata Json @default("{}")
+  @@index([tenantId])
+  @@map("student_club_memberships")
+}
+
+model StudentLeadershipRoles {
+  id        String    @id @default(uuid()) @db.Uuid
+  tenantId  String    @map("tenant_id") @db.Uuid
+  createdBy String?   @map("created_by") @db.Uuid
+  updatedBy String?   @map("updated_by") @db.Uuid
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  name String @db.VarChar(255)
+  code String? @db.VarChar(50)
+  status String @default("active") @db.VarChar(50)
+  metadata Json @default("{}")
+  @@index([tenantId])
+  @@map("student_leadership_roles")
+}
