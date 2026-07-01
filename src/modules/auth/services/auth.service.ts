@@ -17,6 +17,7 @@ import {
   ForgotPasswordDto,
   ResetPasswordDto,
   Enable2FADto,
+  RegisterDto,
 } from '../dto/auth.dto';
 
 export interface TokenPair {
@@ -45,6 +46,49 @@ export class AuthService {
     private readonly sessionStore: SessionStoreService,
     private readonly otpStore: OtpStoreService,
   ) {}
+
+  async register(dto: RegisterDto): Promise<TokenPair> {
+    const existing = await this.authRepo.findUserByEmail(dto.tenantId, dto.email);
+    if (existing) throw new BadRequestException('User already exists');
+
+    const [firstName, ...lastNames] = dto.fullName.split(' ');
+    const lastName = lastNames.join(' ') || 'User';
+
+    const passwordHash = await this.authRepo.hashPassword(dto.password);
+
+    const user = await this.authRepo.createUser({
+      tenantId: dto.tenantId,
+      email: dto.email,
+      passwordHash,
+      firstName,
+      lastName,
+      status: 'ACTIVE',
+    });
+
+    if (dto.role) {
+      const role = await this.authRepo.findRoleBySlug(dto.tenantId, dto.role.toLowerCase());
+      if (role) {
+        await this.authRepo.assignRoleToUser(dto.tenantId, user.id, role.id);
+      }
+    }
+
+    return this.issueTokens(user);
+  }
+
+  async getProfile(userId: string, tenantId: string) {
+    const user = await this.authRepo.findUserById(tenantId, userId);
+    if (!user) throw new UnauthorizedException();
+
+    const permissions = await this.authRepo.getUserPermissions(userId);
+    const roles = await this.authRepo.getUserRoles(userId);
+
+    const { passwordHash, twoFactorSecret, ...profile } = user;
+    return {
+      ...profile,
+      permissions,
+      roles,
+    };
+  }
 
   async login(dto: LoginDto, ip: string, userAgent?: string): Promise<TokenPair & { requires2FA?: boolean }> {
     const user = await this.authRepo.findUserByEmail(dto.tenantId, dto.email);

@@ -18,6 +18,29 @@ export class AuthRepository {
     });
   }
 
+  async createUser(data: {
+    tenantId: string;
+    email: string;
+    passwordHash: string;
+    firstName: string;
+    lastName: string;
+    status?: any;
+  }) {
+    return this.prisma.users.create({ data });
+  }
+
+  async findRoleBySlug(tenantId: string, slug: string) {
+    return this.prisma.roles.findFirst({
+      where: { tenantId, slug },
+    });
+  }
+
+  async assignRoleToUser(tenantId: string, userId: string, roleId: string) {
+    return this.prisma.userRoles.create({
+      data: { tenantId, userId, roleId },
+    });
+  }
+
   async createRefreshToken(data: {
     tenantId: string;
     userId: string;

@@ -5,6 +5,7 @@ import { JwtAuthGuard } from '@/guards/jwt-auth.guard';
 import { PermissionsGuard } from '@/guards/permissions.guard';
 import { RequirePermissions } from '@/common/decorators/permissions.decorator';
 import { PaginationDto } from '@/shared/dto/pagination.dto';
+import { CreateUsersDto, UpdateUsersDto } from '../dto/users.dto';
 
 @ApiTags('Users')
 @ApiBearerAuth()
@@ -30,14 +31,14 @@ export class UsersController {
   @Post()
   @ApiOperation({ summary: 'Create users' })
   @RequirePermissions('users:create')
-  create(@Body() dto: Record<string, unknown>) {
+  create(@Body() dto: CreateUsersDto) {
     return this.usersService.create(dto);
   }
 
   @Put(':id')
   @ApiOperation({ summary: 'Update users' })
   @RequirePermissions('users:update')
-  update(@Param('id', ParseUUIDPipe) id: string, @Body() dto: Record<string, unknown>) {
+  update(@Param('id', ParseUUIDPipe) id: string, @Body() dto: UpdateUsersDto) {
     return this.usersService.update(id, dto);
   }
 

@@ -35,7 +35,6 @@ async function main() {
       name: 'Super Admin',
       slug: 'super-admin',
       isSystem: true,
-      level: 0,
     },
   });
 

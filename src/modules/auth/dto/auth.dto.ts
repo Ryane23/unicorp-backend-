@@ -65,3 +65,32 @@ export class Verify2FADto {
   @IsString()
   code!: string;
 }
+
+export class RegisterDto {
+  @ApiProperty({ example: 'John Doe' })
+  @IsString()
+  fullName!: string;
+
+  @ApiProperty({ example: 'john@university.edu' })
+  @IsEmail()
+  email!: string;
+
+  @ApiProperty({ example: 'SecurePass123!' })
+  @IsString()
+  @MinLength(8)
+  password!: string;
+
+  @ApiProperty({ description: 'Tenant UUID' })
+  @IsUUID()
+  tenantId!: string;
+
+  @ApiPropertyOptional({ example: 'STUDENT', description: 'Assigned role' })
+  @IsOptional()
+  @IsString()
+  role?: string;
+
+  @ApiPropertyOptional({ description: 'Department identification' })
+  @IsOptional()
+  @IsString()
+  department?: string;
+}

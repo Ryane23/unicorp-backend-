@@ -17,6 +17,7 @@ import {
   ForgotPasswordDto,
   ResetPasswordDto,
   Enable2FADto,
+  RegisterDto,
 } from '../dto/auth.dto';
 import { Public } from '@/common/decorators/permissions.decorator';
 import { JwtAuthGuard } from '@/guards/jwt-auth.guard';
@@ -25,6 +26,14 @@ import { JwtAuthGuard } from '@/guards/jwt-auth.guard';
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
+
+  @Public()
+  @Post('register')
+  @HttpCode(HttpStatus.CREATED)
+  @ApiOperation({ summary: 'User registration' })
+  register(@Body() dto: RegisterDto) {
+    return this.authService.register(dto);
+  }
 
   @Public()
   @Post('login')
@@ -89,5 +98,13 @@ export class AuthController {
   @ApiOperation({ summary: 'List active sessions' })
   getSessions(@Req() req: Request) {
     return this.authService.getActiveSessions(req.user!.sub);
+  }
+
+  @Get('me')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get current user profile' })
+  getMe(@Req() req: Request) {
+    return this.authService.getProfile(req.user!.sub, req.user!.tenantId);
   }
 }

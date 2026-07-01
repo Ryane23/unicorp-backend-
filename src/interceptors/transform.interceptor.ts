@@ -7,18 +7,15 @@ import {
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-export interface ApiResponse<T> {
-  success: boolean;
-  data: T;
-  timestamp: string;
-}
+import { ApiResponse } from '@/common/interfaces/api-response.interface';
 
 @Injectable()
 export class TransformInterceptor<T> implements NestInterceptor<T, ApiResponse<T>> {
-  intercept(_context: ExecutionContext, next: CallHandler): Observable<ApiResponse<T>> {
+  intercept(context: ExecutionContext, next: CallHandler): Observable<ApiResponse<T>> {
     return next.handle().pipe(
       map((data) => ({
         success: true,
+        message: 'Operation successful',
         data,
         timestamp: new Date().toISOString(),
       })),

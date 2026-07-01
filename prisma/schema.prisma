@@ -6,24 +6,143 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
-enum UserStatus { ACTIVE INACTIVE SUSPENDED PENDING_VERIFICATION }
-enum Gender { MALE FEMALE OTHER PREFER_NOT_TO_SAY }
-enum ApplicationStatus { DRAFT SUBMITTED UNDER_REVIEW APPROVED REJECTED WAITLISTED }
-enum StudentStatus { ACTIVE INACTIVE GRADUATED WITHDRAWN SUSPENDED DEFERRED }
-enum RegistrationStatus { PENDING APPROVED REJECTED DROPPED }
-enum PaymentStatus { PENDING COMPLETED FAILED REFUNDED PARTIAL }
-enum ExamType { MIDTERM FINAL SUPPLEMENTARY QUIZ PRACTICAL }
-enum ResultStatus { DRAFT SUBMITTED MODERATED APPROVED PUBLISHED }
-enum EmploymentType { FULL_TIME PART_TIME CONTRACT INTERN ADJUNCT }
-enum LeaveStatus { PENDING APPROVED REJECTED CANCELLED }
-enum BorrowingStatus { ACTIVE RETURNED OVERDUE LOST }
-enum AllocationStatus { PENDING ALLOCATED CHECKED_IN CHECKED_OUT }
-enum NotificationChannel { EMAIL SMS PUSH IN_APP }
-enum AuditAction { CREATE UPDATE DELETE LOGIN LOGOUT EXPORT IMPORT }
-enum TenantStatus { ACTIVE SUSPENDED TRIAL EXPIRED }
-enum SemesterType { FIRST SECOND THIRD SUMMER }
-enum AttendanceStatus { PRESENT ABSENT LATE EXCUSED }
-enum TranscriptStatus { REQUESTED PROCESSING READY DELIVERED VERIFIED }
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+  PENDING_VERIFICATION
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+  PREFER_NOT_TO_SAY
+}
+
+enum ApplicationStatus {
+  DRAFT
+  SUBMITTED
+  UNDER_REVIEW
+  APPROVED
+  REJECTED
+  WAITLISTED
+}
+
+enum StudentStatus {
+  ACTIVE
+  INACTIVE
+  GRADUATED
+  WITHDRAWN
+  SUSPENDED
+  DEFERRED
+}
+
+enum RegistrationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  DROPPED
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+  PARTIAL
+}
+
+enum ExamType {
+  MIDTERM
+  FINAL
+  SUPPLEMENTARY
+  QUIZ
+  PRACTICAL
+}
+
+enum ResultStatus {
+  DRAFT
+  SUBMITTED
+  MODERATED
+  APPROVED
+  PUBLISHED
+}
+
+enum EmploymentType {
+  FULL_TIME
+  PART_TIME
+  CONTRACT
+  INTERN
+  ADJUNCT
+}
+
+enum LeaveStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELLED
+}
+
+enum BorrowingStatus {
+  ACTIVE
+  RETURNED
+  OVERDUE
+  LOST
+}
+
+enum AllocationStatus {
+  PENDING
+  ALLOCATED
+  CHECKED_IN
+  CHECKED_OUT
+}
+
+enum NotificationChannel {
+  EMAIL
+  SMS
+  PUSH
+  IN_APP
+}
+
+enum AuditAction {
+  CREATE
+  UPDATE
+  DELETE
+  LOGIN
+  LOGOUT
+  EXPORT
+  IMPORT
+}
+
+enum TenantStatus {
+  ACTIVE
+  SUSPENDED
+  TRIAL
+  EXPIRED
+}
+
+enum SemesterType {
+  FIRST
+  SECOND
+  THIRD
+  SUMMER
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  LATE
+  EXCUSED
+}
+
+enum TranscriptStatus {
+  REQUESTED
+  PROCESSING
+  READY
+  DELIVERED
+  VERIFIED
+}
 model Tenants {
   id        String    @id @default(uuid()) @db.Uuid
   tenantId  String    @map("tenant_id") @db.Uuid
@@ -313,7 +432,11 @@ model Users {
   status UserStatus @default(PENDING_VERIFICATION)
   emailVerified Boolean @default(false) @map("email_verified")
   twoFactorEnabled Boolean @default(false) @map("two_factor_enabled")
+  twoFactorSecret String? @map("two_factor_secret") @db.VarChar(255)
   lastLoginAt DateTime? @map("last_login_at")
+  lastLoginIp String? @map("last_login_ip") @db.VarChar(45)
+  institutionId String? @map("institution_id") @db.Uuid
+  campusId String? @map("campus_id") @db.Uuid
   @@index([tenantId])
   @@index([tenantId, createdAt])
   @@map("users")
@@ -327,11 +450,13 @@ model RefreshTokens {
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime  @updatedAt @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
-  name String @db.VarChar(255)
-  code String? @db.VarChar(50)
-  description String? @db.Text
-  status String @default("active") @db.VarChar(50)
-  metadata Json @default("{}")
+  userId String @map("user_id") @db.Uuid
+  token String @unique @db.VarChar(500)
+  expiresAt DateTime @map("expires_at")
+  revoked Boolean @default(false)
+  revokedAt DateTime? @map("revoked_at")
+  ipAddress String? @map("ip_address") @db.VarChar(45)
+  userAgent String? @map("user_agent") @db.Text
   @@index([tenantId])
   @@index([tenantId, createdAt])
   @@map("refresh_tokens")
@@ -345,11 +470,14 @@ model LoginHistory {
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime  @updatedAt @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
-  name String @db.VarChar(255)
-  code String? @db.VarChar(50)
-  description String? @db.Text
-  status String @default("active") @db.VarChar(50)
-  metadata Json @default("{}")
+  userId String @map("user_id") @db.Uuid
+  ipAddress String @map("ip_address") @db.VarChar(45)
+  userAgent String? @map("user_agent") @db.Text
+  device String? @db.VarChar(100)
+  location String? @db.VarChar(255)
+  success Boolean @default(true)
+  failReason String? @map("fail_reason") @db.VarChar(255)
+  loggedAt DateTime @default(now()) @map("logged_at")
   @@index([tenantId])
   @@index([tenantId, createdAt])
   @@map("login_history")
@@ -363,11 +491,14 @@ model Sessions {
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime  @updatedAt @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
-  name String @db.VarChar(255)
-  code String? @db.VarChar(50)
-  description String? @db.Text
-  status String @default("active") @db.VarChar(50)
-  metadata Json @default("{}")
+  userId String @map("user_id") @db.Uuid
+  sessionId String @unique @map("session_id") @db.VarChar(255)
+  ipAddress String? @map("ip_address") @db.VarChar(45)
+  userAgent String? @map("user_agent") @db.Text
+  device String? @db.VarChar(100)
+  expiresAt DateTime @map("expires_at")
+  lastActivity DateTime @default(now()) @map("last_activity")
+  isActive Boolean @default(true) @map("is_active")
   @@index([tenantId])
   @@index([tenantId, createdAt])
   @@map("sessions")
@@ -381,11 +512,10 @@ model PasswordResets {
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime  @updatedAt @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
-  name String @db.VarChar(255)
-  code String? @db.VarChar(50)
-  description String? @db.Text
-  status String @default("active") @db.VarChar(50)
-  metadata Json @default("{}")
+  userId String @map("user_id") @db.Uuid
+  token String @unique @db.VarChar(255)
+  expiresAt DateTime @map("expires_at")
+  usedAt DateTime? @map("used_at")
   @@index([tenantId])
   @@index([tenantId, createdAt])
   @@map("password_resets")
@@ -668,11 +798,8 @@ model RolePermissions {
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime  @updatedAt @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
-  name String @db.VarChar(255)
-  code String? @db.VarChar(50)
-  description String? @db.Text
-  status String @default("active") @db.VarChar(50)
-  metadata Json @default("{}")
+  roleId String @map("role_id") @db.Uuid
+  permissionId String @map("permission_id") @db.Uuid
   @@index([tenantId])
   @@index([tenantId, createdAt])
   @@map("role_permissions")
@@ -686,11 +813,10 @@ model UserRoles {
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime  @updatedAt @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
-  name String @db.VarChar(255)
-  code String? @db.VarChar(50)
-  description String? @db.Text
-  status String @default("active") @db.VarChar(50)
-  metadata Json @default("{}")
+  userId String @map("user_id") @db.Uuid
+  roleId String @map("role_id") @db.Uuid
+  assignedBy String? @map("assigned_by") @db.Uuid
+  expiresAt DateTime? @map("expires_at")
   @@index([tenantId])
   @@index([tenantId, createdAt])
   @@map("user_roles")
@@ -704,11 +830,11 @@ model UserPermissions {
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime  @updatedAt @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
-  name String @db.VarChar(255)
-  code String? @db.VarChar(50)
-  description String? @db.Text
-  status String @default("active") @db.VarChar(50)
-  metadata Json @default("{}")
+  userId String @map("user_id") @db.Uuid
+  permissionId String @map("permission_id") @db.Uuid
+  granted Boolean @default(true)
+  assignedBy String? @map("assigned_by") @db.Uuid
+  expiresAt DateTime? @map("expires_at")
   @@index([tenantId])
   @@index([tenantId, createdAt])
   @@map("user_permissions")
