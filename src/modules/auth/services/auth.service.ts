@@ -6,19 +6,17 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import { authenticator } from 'otplib';
 import { v4 as uuidv4 } from 'uuid';
 import { AuthRepository } from '../repositories/auth.repository';
 import { SessionStoreService } from '@/infrastructure/redis/session-store.service';
-import { OtpStoreService } from '@/infrastructure/redis/otp-store.service';
 import {
   LoginDto,
   RefreshTokenDto,
   ForgotPasswordDto,
   ResetPasswordDto,
-  Enable2FADto,
   RegisterDto,
 } from '../dto/auth.dto';
+import { UserType } from '@prisma/client';
 
 export interface TokenPair {
   accessToken: string;
@@ -30,9 +28,6 @@ export interface TokenPair {
 export interface AuthUserPayload {
   sub: string;
   email: string;
-  tenantId: string;
-  institutionId?: string;
-  campusId?: string;
   permissions: string[];
   roles: string[];
 }
@@ -44,11 +39,10 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly config: ConfigService,
     private readonly sessionStore: SessionStoreService,
-    private readonly otpStore: OtpStoreService,
   ) {}
 
   async register(dto: RegisterDto): Promise<TokenPair> {
-    const existing = await this.authRepo.findUserByEmail(dto.tenantId, dto.email);
+    const existing = await this.authRepo.findUserByEmail(dto.email);
     if (existing) throw new BadRequestException('User already exists');
 
     const [firstName, ...lastNames] = dto.fullName.split(' ');
@@ -57,32 +51,32 @@ export class AuthService {
     const passwordHash = await this.authRepo.hashPassword(dto.password);
 
     const user = await this.authRepo.createUser({
-      tenantId: dto.tenantId,
       email: dto.email,
+      username: dto.username || dto.email.split('@')[0] + uuidv4().slice(0, 4),
       passwordHash,
       firstName,
       lastName,
-      status: 'ACTIVE',
+      userType: (dto.role?.toUpperCase() as UserType) || UserType.STUDENT,
     });
 
     if (dto.role) {
-      const role = await this.authRepo.findRoleBySlug(dto.tenantId, dto.role.toLowerCase());
+      const role = await this.authRepo.findRoleBySlug(dto.role.toLowerCase());
       if (role) {
-        await this.authRepo.assignRoleToUser(dto.tenantId, user.id, role.id);
+        await this.authRepo.assignRoleToUser(user.id, role.id);
       }
     }
 
     return this.issueTokens(user);
   }
 
-  async getProfile(userId: string, tenantId: string) {
-    const user = await this.authRepo.findUserById(tenantId, userId);
+  async getProfile(userId: string) {
+    const user = await this.authRepo.findUserById(userId);
     if (!user) throw new UnauthorizedException();
 
     const permissions = await this.authRepo.getUserPermissions(userId);
     const roles = await this.authRepo.getUserRoles(userId);
 
-    const { passwordHash, twoFactorSecret, ...profile } = user;
+    const { passwordHash, ...profile } = user;
     return {
       ...profile,
       permissions,
@@ -90,12 +84,11 @@ export class AuthService {
     };
   }
 
-  async login(dto: LoginDto, ip: string, userAgent?: string): Promise<TokenPair & { requires2FA?: boolean }> {
-    const user = await this.authRepo.findUserByEmail(dto.tenantId, dto.email);
+  async login(dto: LoginDto, ip: string, userAgent?: string): Promise<TokenPair> {
+    const user = await this.authRepo.findUserByEmail(dto.email);
 
     if (!user) {
       await this.authRepo.createLoginHistory({
-        tenantId: dto.tenantId,
         userId: '00000000-0000-0000-0000-000000000000',
         ipAddress: ip,
         userAgent,
@@ -108,7 +101,6 @@ export class AuthService {
     const valid = await this.authRepo.comparePassword(dto.password, user.passwordHash);
     if (!valid) {
       await this.authRepo.createLoginHistory({
-        tenantId: dto.tenantId,
         userId: user.id,
         ipAddress: ip,
         userAgent,
@@ -122,21 +114,9 @@ export class AuthService {
       throw new ForbiddenException('Account suspended');
     }
 
-    if (user.twoFactorEnabled) {
-      if (!dto.twoFactorCode) {
-        return { accessToken: '', refreshToken: '', expiresIn: '', sessionId: '', requires2FA: true };
-      }
-      const valid2FA = authenticator.verify({
-        token: dto.twoFactorCode,
-        secret: user.twoFactorSecret!,
-      });
-      if (!valid2FA) throw new UnauthorizedException('Invalid 2FA code');
-    }
-
     const tokens = await this.issueTokens(user, ip, userAgent);
     await this.authRepo.updateLastLogin(user.id, ip);
     await this.authRepo.createLoginHistory({
-      tenantId: dto.tenantId,
       userId: user.id,
       ipAddress: ip,
       userAgent,
@@ -150,7 +130,7 @@ export class AuthService {
     const stored = await this.authRepo.findRefreshToken(dto.refreshToken);
     if (!stored) throw new UnauthorizedException('Invalid refresh token');
 
-    const user = await this.authRepo.findUserById(stored.tenantId, stored.userId);
+    const user = await this.authRepo.findUserById(stored.userId);
     if (!user) throw new UnauthorizedException('User not found');
 
     await this.authRepo.revokeRefreshToken(dto.refreshToken);
@@ -166,19 +146,17 @@ export class AuthService {
   }
 
   async forgotPassword(dto: ForgotPasswordDto): Promise<{ message: string }> {
-    const user = await this.authRepo.findUserByEmail(dto.tenantId, dto.email);
+    const user = await this.authRepo.findUserByEmail(dto.email);
     if (!user) return { message: 'If the email exists, a reset link has been sent' };
 
     const token = uuidv4();
     const expiresAt = new Date(Date.now() + 3600000);
     await this.authRepo.createPasswordReset({
-      tenantId: dto.tenantId,
       userId: user.id,
       token,
       expiresAt,
     });
 
-    // Queue email via BullMQ (notification service)
     return { message: 'If the email exists, a reset link has been sent' };
   }
 
@@ -194,40 +172,10 @@ export class AuthService {
     return { message: 'Password reset successfully' };
   }
 
-  async setup2FA(userId: string, tenantId: string) {
-    const user = await this.authRepo.findUserById(tenantId, userId);
-    if (!user) throw new UnauthorizedException();
-
-    const secret = authenticator.generateSecret();
-    const otpauth = authenticator.keyuri(user.email, 'UniCore ERP', secret);
-    await this.authRepo.updateTwoFactor(userId, false, secret);
-
-    return { secret, otpauth };
-  }
-
-  async enable2FA(userId: string, tenantId: string, dto: Enable2FADto) {
-    const user = await this.authRepo.findUserById(tenantId, userId);
-    if (!user?.twoFactorSecret) throw new BadRequestException('Setup 2FA first');
-
-    const valid = authenticator.verify({ token: dto.code, secret: user.twoFactorSecret });
-    if (!valid) throw new BadRequestException('Invalid code');
-
-    await this.authRepo.updateTwoFactor(userId, true, user.twoFactorSecret);
-    return { message: '2FA enabled' };
-  }
-
-  async getActiveSessions(userId: string) {
-    // Sessions from DB + Redis
-    return { sessions: [] };
-  }
-
   private async issueTokens(
     user: {
       id: string;
       email: string;
-      tenantId: string;
-      institutionId?: string | null;
-      campusId?: string | null;
     },
     ip?: string,
     userAgent?: string,
@@ -238,9 +186,6 @@ export class AuthService {
     const payload: AuthUserPayload = {
       sub: user.id,
       email: user.email,
-      tenantId: user.tenantId,
-      institutionId: user.institutionId ?? undefined,
-      campusId: user.campusId ?? undefined,
       permissions,
       roles,
     };
@@ -257,7 +202,6 @@ export class AuthService {
     const refreshExpiry = this.parseExpiry(refreshExpiresIn);
 
     await this.authRepo.createRefreshToken({
-      tenantId: user.tenantId,
       userId: user.id,
       token: refreshToken,
       expiresAt: refreshExpiry,
@@ -269,7 +213,6 @@ export class AuthService {
     const sessionExpiry = this.parseExpiry(refreshExpiresIn);
 
     await this.authRepo.createSession({
-      tenantId: user.tenantId,
       userId: user.id,
       sessionId,
       expiresAt: sessionExpiry,
@@ -279,11 +222,10 @@ export class AuthService {
 
     await this.sessionStore.create(sessionId, {
       userId: user.id,
-      tenantId: user.tenantId,
       ipAddress: ip,
       userAgent,
       createdAt: new Date().toISOString(),
-    });
+    } as any);
 
     return { accessToken, refreshToken, expiresIn: accessExpiresIn, sessionId };
   }

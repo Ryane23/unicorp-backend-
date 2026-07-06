@@ -9,7 +9,7 @@ import { RedisModule } from './infrastructure/redis/redis.module';
 import { QueuesModule } from './queues/queues.module';
 import { WebSocketModule } from './infrastructure/websocket/websocket.module';
 import { CommonModule } from './common/common.module';
-import { TenantMiddleware } from './middleware/tenant.middleware';
+
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { GlobalExceptionFilter } from './filters/global-exception.filter';
 import { TransformInterceptor } from './interceptors/transform.interceptor';
@@ -123,8 +123,4 @@ import { HealthController } from './shared/health.controller';
     { provide: APP_INTERCEPTOR, useClass: LoggingInterceptor },
   ],
 })
-export class AppModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer.apply(TenantMiddleware).forRoutes('*');
-  }
-}
+export class AppModule {}

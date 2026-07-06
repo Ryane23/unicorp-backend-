@@ -1,4 +1,4 @@
-import { IsEmail, IsString, MinLength, IsOptional, IsUUID } from 'class-validator';
+import { IsEmail, IsString, MinLength, IsOptional } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class LoginDto {
@@ -10,10 +10,6 @@ export class LoginDto {
   @IsString()
   @MinLength(8)
   password!: string;
-
-  @ApiProperty({ description: 'Tenant UUID' })
-  @IsUUID()
-  tenantId!: string;
 
   @ApiPropertyOptional({ description: '2FA code if enabled' })
   @IsOptional()
@@ -31,10 +27,6 @@ export class ForgotPasswordDto {
   @ApiProperty()
   @IsEmail()
   email!: string;
-
-  @ApiProperty()
-  @IsUUID()
-  tenantId!: string;
 }
 
 export class ResetPasswordDto {
@@ -48,24 +40,6 @@ export class ResetPasswordDto {
   newPassword!: string;
 }
 
-export class VerifyEmailDto {
-  @ApiProperty()
-  @IsString()
-  token!: string;
-}
-
-export class Enable2FADto {
-  @ApiProperty()
-  @IsString()
-  code!: string;
-}
-
-export class Verify2FADto {
-  @ApiProperty()
-  @IsString()
-  code!: string;
-}
-
 export class RegisterDto {
   @ApiProperty({ example: 'John Doe' })
   @IsString()
@@ -75,16 +49,17 @@ export class RegisterDto {
   @IsEmail()
   email!: string;
 
+  @ApiPropertyOptional({ example: 'johndoe123' })
+  @IsOptional()
+  @IsString()
+  username?: string;
+
   @ApiProperty({ example: 'SecurePass123!' })
   @IsString()
   @MinLength(8)
   password!: string;
 
-  @ApiProperty({ description: 'Tenant UUID' })
-  @IsUUID()
-  tenantId!: string;
-
-  @ApiPropertyOptional({ example: 'STUDENT', description: 'Assigned role' })
+  @ApiPropertyOptional({ example: 'STUDENT', description: 'Assigned role/type' })
   @IsOptional()
   @IsString()
   role?: string;

@@ -16,7 +16,6 @@ import {
   RefreshTokenDto,
   ForgotPasswordDto,
   ResetPasswordDto,
-  Enable2FADto,
   RegisterDto,
 } from '../dto/auth.dto';
 import { Public } from '@/common/decorators/permissions.decorator';
@@ -76,22 +75,6 @@ export class AuthController {
     return this.authService.resetPassword(dto);
   }
 
-  @Get('2fa/setup')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'Setup two-factor authentication' })
-  setup2FA(@Req() req: Request) {
-    return this.authService.setup2FA(req.user!.sub, req.user!.tenantId);
-  }
-
-  @Post('2fa/enable')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'Enable two-factor authentication' })
-  enable2FA(@Req() req: Request, @Body() dto: Enable2FADto) {
-    return this.authService.enable2FA(req.user!.sub, req.user!.tenantId, dto);
-  }
-
   @Get('sessions')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
@@ -105,6 +88,6 @@ export class AuthController {
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get current user profile' })
   getMe(@Req() req: Request) {
-    return this.authService.getProfile(req.user!.sub, req.user!.tenantId);
+    return this.authService.getProfile(req.user!.sub);
   }
 }

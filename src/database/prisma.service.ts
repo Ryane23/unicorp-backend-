@@ -11,15 +11,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
     await this.$disconnect();
   }
 
-  /**
-   * Execute callback within a tenant-scoped transaction.
-   * All queries automatically filter by tenantId.
-   */
-  async withTenant<T>(tenantId: string, fn: (prisma: PrismaClient) => Promise<T>): Promise<T> {
-    return fn(this);
-  }
-
-  /** Soft-delete aware find - excludes deletedAt records */
+  // Helper for soft deletion filtering
   softDeleteFilter() {
     return { deletedAt: null };
   }
