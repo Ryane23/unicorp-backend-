@@ -8,13 +8,13 @@ export class AuthRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async findUserByEmail(email: string) {
-    return this.prisma.user.findFirst({
+    return this.prisma.users.findFirst({
       where: { email, deletedAt: null },
     });
   }
 
   async findUserById(id: string) {
-    return this.prisma.user.findFirst({
+    return this.prisma.users.findFirst({
       where: { id, deletedAt: null },
     });
   }
@@ -27,17 +27,17 @@ export class AuthRepository {
     lastName: string;
     userType: UserType;
   }) {
-    return this.prisma.user.create({ data });
+    return this.prisma.users.create({ data });
   }
 
   async findRoleBySlug(slug: string) {
-    return this.prisma.role.findFirst({
+    return this.prisma.roles.findFirst({
       where: { slug },
     });
   }
 
   async assignRoleToUser(userId: string, roleId: string) {
-    return this.prisma.userRole.create({
+    return this.prisma.userRoles.create({
       data: { userId, roleId },
     });
   }
@@ -49,24 +49,24 @@ export class AuthRepository {
     ipAddress?: string;
     userAgent?: string;
   }) {
-    return this.prisma.refreshToken.create({ data });
+    return this.prisma.refreshTokens.create({ data });
   }
 
   async findRefreshToken(token: string) {
-    return this.prisma.refreshToken.findFirst({
+    return this.prisma.refreshTokens.findFirst({
       where: { token, revoked: false, expiresAt: { gt: new Date() } },
     });
   }
 
   async revokeRefreshToken(token: string) {
-    return this.prisma.refreshToken.updateMany({
+    return this.prisma.refreshTokens.updateMany({
       where: { token },
       data: { revoked: true, revokedAt: new Date() },
     });
   }
 
   async revokeAllUserTokens(userId: string) {
-    return this.prisma.refreshToken.updateMany({
+    return this.prisma.refreshTokens.updateMany({
       where: { userId, revoked: false },
       data: { revoked: true, revokedAt: new Date() },
     });
@@ -91,11 +91,11 @@ export class AuthRepository {
     userAgent?: string;
     device?: string;
   }) {
-    return this.prisma.session.create({ data });
+    return this.prisma.sessions.create({ data });
   }
 
   async deactivateSession(sessionId: string) {
-    return this.prisma.session.updateMany({
+    return this.prisma.sessions.updateMany({
       where: { sessionId },
       data: { isActive: false },
     });
@@ -106,24 +106,24 @@ export class AuthRepository {
     token: string;
     expiresAt: Date;
   }) {
-    return this.prisma.passwordReset.create({ data });
+    return this.prisma.passwordResets.create({ data });
   }
 
   async findPasswordReset(token: string) {
-    return this.prisma.passwordReset.findFirst({
+    return this.prisma.passwordResets.findFirst({
       where: { token, usedAt: null, expiresAt: { gt: new Date() } },
     });
   }
 
   async markPasswordResetUsed(id: string) {
-    return this.prisma.passwordReset.update({
+    return this.prisma.passwordResets.update({
       where: { id },
       data: { usedAt: new Date() },
     });
   }
 
   async updatePassword(userId: string, passwordHash: string) {
-    return this.prisma.user.update({
+    return this.prisma.users.update({
       where: { id: userId },
       data: { passwordHash },
     });
@@ -138,14 +138,14 @@ export class AuthRepository {
   }
 
   async getUserPermissions(userId: string): Promise<string[]> {
-    const userRoles = await this.prisma.userRole.findMany({
+    const userRoles = await this.prisma.userRoles.findMany({
       where: { userId },
       select: { roleId: true },
     });
     const roleIds = userRoles.map((r) => r.roleId);
 
     const rolePermRows = roleIds.length
-      ? await this.prisma.rolePermission.findMany({
+      ? await this.prisma.rolePermissions.findMany({
           where: { roleId: { in: roleIds } },
           select: { permissionId: true },
         })
@@ -153,7 +153,7 @@ export class AuthRepository {
 
     const permIds = new Set(rolePermRows.map((r) => r.permissionId));
 
-    const directPermRows = await this.prisma.userPermission.findMany({
+    const directPermRows = await this.prisma.userPermissions.findMany({
       where: { userId, granted: true },
       select: { permissionId: true },
     });
@@ -169,13 +169,13 @@ export class AuthRepository {
   }
 
   async getUserRoles(userId: string): Promise<string[]> {
-    const userRoleRows = await this.prisma.userRole.findMany({
+    const userRoleRows = await this.prisma.userRoles.findMany({
       where: { userId },
       select: { roleId: true },
     });
     if (!userRoleRows.length) return [];
 
-    const roles = await this.prisma.role.findMany({
+    const roles = await this.prisma.roles.findMany({
       where: { id: { in: userRoleRows.map((r) => r.roleId) } },
       select: { slug: true },
     });
@@ -183,10 +183,9 @@ export class AuthRepository {
   }
 
   async updateLastLogin(userId: string, ip: string) {
-    // Current schema doesn't have two-factor fields in User yet, but I'll update what's available
-    return this.prisma.user.update({
+    return this.prisma.users.update({
       where: { id: userId },
-      data: { lastLoginAt: new Date() }, // lastLoginIp is DateTime? in schema, should be string? but let's follow schema
+      data: { lastLoginAt: new Date(), lastLoginIp: ip },
     });
   }
 }

@@ -91,7 +91,7 @@ enum AuditAction {
 // 1. AUTHENTICATION
 // ==========================================
 
-model User {
+model Users {
   id              String       @id @default(uuid()) @db.Uuid
   email           String       @unique @db.VarChar(255)
   username        String       @unique @db.VarChar(100)
@@ -102,30 +102,30 @@ model User {
   lastName        String       @map("last_name") @db.VarChar(100)
   phone           String?      @db.VarChar(50)
   lastLoginAt     DateTime?    @map("last_login_at")
-  lastLoginIp     DateTime?    @map("last_login_ip")
+  lastLoginIp     String?      @map("last_login_ip") @db.VarChar(45)
   createdAt       DateTime     @default(now()) @map("created_at")
   updatedAt       DateTime     @updatedAt @map("updated_at")
   deletedAt       DateTime?    @map("deleted_at")
 
   // Relations
-  student         Student?
-  lecturer        Lecturer?
-  administrator   Administrator?
+  student         Students?
+  lecturer        Lecturers?
+  administrator   Administrators?
   staff           Staff?
-  roles           UserRole[]
-  refreshTokens   RefreshToken[]
-  sessions        Session[]
-  passwordResets  PasswordReset[]
+  roles           UserRoles[]
+  refreshTokens   RefreshTokens[]
+  sessions        Sessions[]
+  passwordResets  PasswordResets[]
   loginHistory    LoginHistory[]
-  auditLogs       AuditLog[]
-  notifications   Notification[]
-  sentMessages    Message[]      @relation("SentMessages")
-  receivedMessages Message[]     @relation("ReceivedMessages")
+  auditLogs       AuditLogs[]
+  notifications   Notifications[]
+  sentMessages    Messages[]      @relation("SentMessages")
+  receivedMessages Messages[]     @relation("ReceivedMessages")
 
   @@map("users")
 }
 
-model Role {
+model Roles {
   id          String           @id @default(uuid()) @db.Uuid
   name        String           @unique @db.VarChar(100)
   slug        String           @unique @db.VarChar(100)
@@ -134,13 +134,13 @@ model Role {
   updatedAt   DateTime         @updatedAt @map("updated_at")
 
   // Relations
-  users       UserRole[]
-  permissions RolePermission[]
+  users       UserRoles[]
+  permissions RolePermissions[]
 
   @@map("roles")
 }
 
-model Permission {
+model Permissions {
   id          String           @id @default(uuid()) @db.Uuid
   name        String           @unique @db.VarChar(100)
   slug        String           @unique @db.VarChar(100)
@@ -150,56 +150,56 @@ model Permission {
   updatedAt   DateTime         @updatedAt @map("updated_at")
 
   // Relations
-  roles       RolePermission[]
-  users       UserPermission[]
+  roles       RolePermissions[]
+  users       UserPermissions[]
 
   @@map("permissions")
 }
 
-model UserRole {
+model UserRoles {
   id        String   @id @default(uuid()) @db.Uuid
   userId    String   @map("user_id") @db.Uuid
   roleId    String   @map("role_id") @db.Uuid
   createdAt DateTime @default(now()) @map("created_at")
 
   // Relations
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  role      Role     @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  user      Users    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role      Roles    @relation(fields: [roleId], references: [id], onDelete: Cascade)
 
   @@unique([userId, roleId])
   @@map("user_roles")
 }
 
-model RolePermission {
-  id           String     @id @default(uuid()) @db.Uuid
-  roleId       String     @map("role_id") @db.Uuid
-  permissionId String     @map("permission_id") @db.Uuid
-  createdAt    DateTime   @default(now()) @map("created_at")
+model RolePermissions {
+  id           String      @id @default(uuid()) @db.Uuid
+  roleId       String      @map("role_id") @db.Uuid
+  permissionId String      @map("permission_id") @db.Uuid
+  createdAt    DateTime    @default(now()) @map("created_at")
 
   // Relations
-  role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
-  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+  role         Roles       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission   Permissions @relation(fields: [permissionId], references: [id], onDelete: Cascade)
 
   @@unique([roleId, permissionId])
   @@map("role_permissions")
 }
 
-model UserPermission {
-  id           String     @id @default(uuid()) @db.Uuid
-  userId       String     @map("user_id") @db.Uuid
-  permissionId String     @map("permission_id") @db.Uuid
-  granted      Boolean    @default(true)
-  createdAt    DateTime   @default(now()) @map("created_at")
+model UserPermissions {
+  id           String      @id @default(uuid()) @db.Uuid
+  userId       String      @map("user_id") @db.Uuid
+  permissionId String      @map("permission_id") @db.Uuid
+  granted      Boolean     @default(true)
+  createdAt    DateTime    @default(now()) @map("created_at")
 
   // Relations
-  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+  user         Users       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  permission   Permissions @relation(fields: [permissionId], references: [id], onDelete: Cascade)
 
   @@unique([userId, permissionId])
   @@map("user_permissions")
 }
 
-model RefreshToken {
+model RefreshTokens {
   id        String   @id @default(uuid()) @db.Uuid
   userId    String   @map("user_id") @db.Uuid
   token     String   @unique @db.VarChar(500)
@@ -211,12 +211,12 @@ model RefreshToken {
   createdAt DateTime @default(now()) @map("created_at")
 
   // Relations
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user      Users    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("refresh_tokens")
 }
 
-model Session {
+model Sessions {
   id           String   @id @default(uuid()) @db.Uuid
   userId       String   @map("user_id") @db.Uuid
   sessionId    String   @unique @map("session_id") @db.VarChar(255)
@@ -229,12 +229,12 @@ model Session {
   createdAt    DateTime @default(now()) @map("created_at")
 
   // Relations
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user         Users    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("sessions")
 }
 
-model PasswordReset {
+model PasswordResets {
   id        String   @id @default(uuid()) @db.Uuid
   userId    String   @map("user_id") @db.Uuid
   token     String   @unique @db.VarChar(255)
@@ -243,7 +243,7 @@ model PasswordReset {
   createdAt DateTime @default(now()) @map("created_at")
 
   // Relations
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user      Users    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("password_resets")
 }
@@ -260,12 +260,12 @@ model LoginHistory {
   loggedAt    DateTime @default(now()) @map("logged_at")
 
   // Relations
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user        Users    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("login_history")
 }
 
-model AuditLog {
+model AuditLogs {
   id          String      @id @default(uuid()) @db.Uuid
   userId      String?     @map("user_id") @db.Uuid
   action      AuditAction
@@ -278,7 +278,7 @@ model AuditLog {
   createdAt   DateTime    @default(now()) @map("created_at")
 
   // Relations
-  user        User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
+  user        Users?      @relation(fields: [userId], references: [id], onDelete: SetNull)
 
   @@map("audit_logs")
 }
@@ -287,7 +287,7 @@ model AuditLog {
 // 2. ACADEMIC STRUCTURE
 // ==========================================
 
-model Faculty {
+model Faculties {
   id          String       @id @default(uuid()) @db.Uuid
   name        String       @unique @db.VarChar(255)
   code        String       @unique @db.VarChar(50)
@@ -297,12 +297,12 @@ model Faculty {
   deletedAt   DateTime?    @map("deleted_at")
 
   // Relations
-  departments Department[]
+  departments Departments[]
 
   @@map("faculties")
 }
 
-model Department {
+model Departments {
   id          String       @id @default(uuid()) @db.Uuid
   name        String       @db.VarChar(255)
   code        String       @unique @db.VarChar(50)
@@ -313,16 +313,16 @@ model Department {
   deletedAt   DateTime?    @map("deleted_at")
 
   // Relations
-  faculty     Faculty      @relation(fields: [facultyId], references: [id])
-  programs    Program[]
-  lecturers   Lecturer[]
-  courses     Course[]
+  faculty     Faculties    @relation(fields: [facultyId], references: [id])
+  programs    Programs[]
+  lecturers   Lecturers[]
+  courses     Courses[]
 
   @@unique([name, facultyId])
   @@map("departments")
 }
 
-model Program {
+model Programs {
   id           String       @id @default(uuid()) @db.Uuid
   name         String       @db.VarChar(255)
   code         String       @unique @db.VarChar(50)
@@ -334,14 +334,14 @@ model Program {
   deletedAt    DateTime?    @map("deleted_at")
 
   // Relations
-  department   Department   @relation(fields: [departmentId], references: [id])
-  students     StudentProgram[]
+  department   Departments  @relation(fields: [departmentId], references: [id])
+  students     StudentPrograms[]
 
   @@unique([name, departmentId])
   @@map("programs")
 }
 
-model AcademicYear {
+model AcademicYears {
   id          String       @id @default(uuid()) @db.Uuid
   name        String       @unique @db.VarChar(100) // e.g., 2023/2024
   startDate   DateTime     @map("start_date") @db.Date
@@ -351,12 +351,12 @@ model AcademicYear {
   updatedAt   DateTime     @updatedAt @map("updated_at")
 
   // Relations
-  semesters   Semester[]
+  semesters   Semesters[]
 
   @@map("academic_years")
 }
 
-model Semester {
+model Semesters {
   id          String         @id @default(uuid()) @db.Uuid
   name        String         @db.VarChar(100) // e.g., First Semester
   academicYearId String      @map("academic_year_id") @db.Uuid
@@ -367,15 +367,15 @@ model Semester {
   updatedAt   DateTime       @updatedAt @map("updated_at")
 
   // Relations
-  academicYear AcademicYear  @relation(fields: [academicYearId], references: [id])
-  offerings    CourseOffering[]
-  results      Grade[]
+  academicYear AcademicYears @relation(fields: [academicYearId], references: [id])
+  offerings    CourseOfferings[]
+  results      Grades[]
 
   @@unique([name, academicYearId])
   @@map("semesters")
 }
 
-model Level {
+model Levels {
   id          String   @id @default(uuid()) @db.Uuid
   name        String   @unique @db.VarChar(50) // e.g., 100, 200, Graduate
   code        Int      @unique // e.g., 100
@@ -383,8 +383,8 @@ model Level {
   updatedAt   DateTime @updatedAt @map("updated_at")
 
   // Relations
-  students    Student[]
-  courses     Course[]
+  students    Students[]
+  courses     Courses[]
 
   @@map("levels")
 }
@@ -393,7 +393,7 @@ model Level {
 // 3. USERS PROFILES
 // ==========================================
 
-model Student {
+model Students {
   id            String         @id @default(uuid()) @db.Uuid
   userId        String         @unique @map("user_id") @db.Uuid
   studentNo     String         @unique @map("student_no") @db.VarChar(50)
@@ -407,17 +407,17 @@ model Student {
   deletedAt     DateTime?      @map("deleted_at")
 
   // Relations
-  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  level         Level          @relation(fields: [levelId], references: [id])
-  programs      StudentProgram[]
-  enrollments   Enrollment[]
-  statusHistory StudentStatusHistory[]
-  attendance    AttendanceRecord[]
+  user          Users          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  level         Levels         @relation(fields: [levelId], references: [id])
+  programs      StudentPrograms[]
+  enrollments   Enrollments[]
+  statusHistory StudentStatusHistories[]
+  attendance    AttendanceRecords[]
 
   @@map("students")
 }
 
-model Lecturer {
+model Lecturers {
   id            String       @id @default(uuid()) @db.Uuid
   userId        String       @unique @map("user_id") @db.Uuid
   staffNo       String       @unique @map("staff_no") @db.VarChar(50)
@@ -429,15 +429,15 @@ model Lecturer {
   deletedAt     DateTime?    @map("deleted_at")
 
   // Relations
-  user          User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  department    Department   @relation(fields: [departmentId], references: [id])
-  courseAssignments CourseAssignment[]
-  offerings     CourseOffering[]
+  user          Users        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  department    Departments  @relation(fields: [departmentId], references: [id])
+  courseAssignments CourseAssignments[]
+  offerings     CourseOfferings[]
 
   @@map("lecturers")
 }
 
-model Administrator {
+model Administrators {
   id            String       @id @default(uuid()) @db.Uuid
   userId        String       @unique @map("user_id") @db.Uuid
   staffNo       String       @unique @map("staff_no") @db.VarChar(50)
@@ -446,7 +446,7 @@ model Administrator {
   updatedAt     DateTime     @updatedAt @map("updated_at")
 
   // Relations
-  user          User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user          Users        @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("administrators")
 }
@@ -461,7 +461,7 @@ model Staff {
   updatedAt     DateTime     @updatedAt @map("updated_at")
 
   // Relations
-  user          User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user          Users        @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("staff")
 }
@@ -470,7 +470,7 @@ model Staff {
 // 4. COURSES
 // ==========================================
 
-model Course {
+model Courses {
   id            String       @id @default(uuid()) @db.Uuid
   code          String       @unique @db.VarChar(20)
   title         String       @db.VarChar(255)
@@ -484,16 +484,16 @@ model Course {
   deletedAt     DateTime?    @map("deleted_at")
 
   // Relations
-  department    Department   @relation(fields: [departmentId], references: [id])
-  level         Level        @relation(fields: [levelId], references: [id])
-  prerequisites CoursePrerequisite[] @relation("CourseMain")
-  requiredFor   CoursePrerequisite[] @relation("CourseRequired")
-  offerings     CourseOffering[]
+  department    Departments  @relation(fields: [departmentId], references: [id])
+  level         Levels       @relation(fields: [levelId], references: [id])
+  prerequisites CoursePrerequisites[] @relation("CourseMain")
+  requiredFor   CoursePrerequisites[] @relation("CourseRequired")
+  offerings     CourseOfferings[]
 
   @@map("courses")
 }
 
-model CoursePrerequisite {
+model CoursePrerequisites {
   id               String   @id @default(uuid()) @db.Uuid
   courseId         String   @map("course_id") @db.Uuid
   prerequisiteId   String   @map("prerequisite_id") @db.Uuid
@@ -501,14 +501,14 @@ model CoursePrerequisite {
   createdAt        DateTime @default(now()) @map("created_at")
 
   // Relations
-  course           Course   @relation("CourseMain", fields: [courseId], references: [id])
-  prerequisite     Course   @relation("CourseRequired", fields: [prerequisiteId], references: [id])
+  course           Courses  @relation("CourseMain", fields: [courseId], references: [id])
+  prerequisite     Courses  @relation("CourseRequired", fields: [prerequisiteId], references: [id])
 
   @@unique([courseId, prerequisiteId])
   @@map("course_prerequisites")
 }
 
-model CourseOffering {
+model CourseOfferings {
   id            String       @id @default(uuid()) @db.Uuid
   courseId      String       @map("course_id") @db.Uuid
   semesterId    String       @map("semester_id") @db.Uuid
@@ -518,26 +518,26 @@ model CourseOffering {
   updatedAt     DateTime     @updatedAt @map("updated_at")
 
   // Relations
-  course        Course       @relation(fields: [courseId], references: [id])
-  semester      Semester     @relation(fields: [semesterId], references: [id])
-  lecturer      Lecturer?    @relation(fields: [lecturerId], references: [id])
-  enrollments   Enrollment[]
-  classes       Class[]
-  attendanceSessions AttendanceSession[]
+  course        Courses      @relation(fields: [courseId], references: [id])
+  semester      Semesters    @relation(fields: [semesterId], references: [id])
+  lecturer      Lecturers?   @relation(fields: [lecturerId], references: [id])
+  enrollments   Enrollments[]
+  classes       Classes[]
+  attendanceSessions AttendanceSessions[]
 
   @@unique([courseId, semesterId])
   @@map("course_offerings")
 }
 
-model CourseAssignment {
-  id            String   @id @default(uuid()) @db.Uuid
-  lecturerId    String   @map("lecturer_id") @db.Uuid
-  courseId      String   @map("course_id") @db.Uuid
-  createdAt     DateTime @default(now()) @map("created_at")
+model CourseAssignments {
+  id            String    @id @default(uuid()) @db.Uuid
+  lecturerId    String    @map("lecturer_id") @db.Uuid
+  courseId      String    @map("course_id") @db.Uuid
+  createdAt     DateTime  @default(now()) @map("created_at")
 
   // Relations
-  lecturer      Lecturer @relation(fields: [lecturerId], references: [id])
-  course        Course   @relation(fields: [courseId], references: [id])
+  lecturer      Lecturers @relation(fields: [lecturerId], references: [id])
+  course        Courses   @relation(fields: [courseId], references: [id])
 
   @@unique([lecturerId, courseId])
   @@map("course_assignments")
@@ -547,7 +547,7 @@ model CourseAssignment {
 // 5. CLASSES
 // ==========================================
 
-model Class {
+model Classes {
   id             String       @id @default(uuid()) @db.Uuid
   offeringId     String       @map("offering_id") @db.Uuid
   name           String       @db.VarChar(50) // e.g., Group A
@@ -555,22 +555,22 @@ model Class {
   updatedAt      DateTime     @updatedAt @map("updated_at")
 
   // Relations
-  offering       CourseOffering @relation(fields: [offeringId], references: [id])
-  sections       ClassSection[]
-  timetables     Timetable[]
+  offering       CourseOfferings @relation(fields: [offeringId], references: [id])
+  sections       ClassSections[]
+  timetables     Timetables[]
 
   @@unique([offeringId, name])
   @@map("classes")
 }
 
-model ClassSection {
+model ClassSections {
   id          String   @id @default(uuid()) @db.Uuid
   classId     String   @map("class_id") @db.Uuid
   name        String   @db.VarChar(50) // e.g., Section 1
   createdAt   DateTime @default(now()) @map("created_at")
 
   // Relations
-  class       Class    @relation(fields: [classId], references: [id])
+  class       Classes  @relation(fields: [classId], references: [id])
 
   @@map("class_sections")
 }
@@ -579,7 +579,7 @@ model ClassSection {
 // 6. STUDENT REGISTRATION
 // ==========================================
 
-model Enrollment {
+model Enrollments {
   id            String           @id @default(uuid()) @db.Uuid
   studentId     String           @map("student_id") @db.Uuid
   offeringId    String           @map("offering_id") @db.Uuid
@@ -590,15 +590,15 @@ model Enrollment {
   updatedAt     DateTime         @updatedAt @map("updated_at")
 
   // Relations
-  student       Student          @relation(fields: [studentId], references: [id])
-  offering      CourseOffering   @relation(fields: [offeringId], references: [id])
-  grades        Grade[]
+  student       Students         @relation(fields: [studentId], references: [id])
+  offering      CourseOfferings  @relation(fields: [offeringId], references: [id])
+  grades        Grades[]
 
   @@unique([studentId, offeringId])
   @@map("enrollments")
 }
 
-model StudentProgram {
+model StudentPrograms {
   id          String   @id @default(uuid()) @db.Uuid
   studentId   String   @map("student_id") @db.Uuid
   programId   String   @map("program_id") @db.Uuid
@@ -606,14 +606,14 @@ model StudentProgram {
   enrolledAt  DateTime @default(now()) @map("enrolled_at")
 
   // Relations
-  student     Student  @relation(fields: [studentId], references: [id])
-  program     Program  @relation(fields: [programId], references: [id])
+  student     Students @relation(fields: [studentId], references: [id])
+  program     Programs @relation(fields: [programId], references: [id])
 
   @@unique([studentId, programId])
   @@map("student_programs")
 }
 
-model StudentStatusHistory {
+model StudentStatusHistories {
   id          String        @id @default(uuid()) @db.Uuid
   studentId   String        @map("student_id") @db.Uuid
   oldStatus   StudentStatus @map("old_status")
@@ -622,7 +622,7 @@ model StudentStatusHistory {
   createdAt   DateTime      @default(now()) @map("created_at")
 
   // Relations
-  student     Student       @relation(fields: [studentId], references: [id])
+  student     Students      @relation(fields: [studentId], references: [id])
 
   @@map("student_status_history")
 }
@@ -631,7 +631,7 @@ model StudentStatusHistory {
 // 7. ATTENDANCE
 // ==========================================
 
-model AttendanceSession {
+model AttendanceSessions {
   id            String           @id @default(uuid()) @db.Uuid
   offeringId    String           @map("offering_id") @db.Uuid
   sessionDate   DateTime         @map("session_date") @db.Date
@@ -641,13 +641,13 @@ model AttendanceSession {
   createdAt     DateTime         @default(now()) @map("created_at")
 
   // Relations
-  offering      CourseOffering   @relation(fields: [offeringId], references: [id])
-  records       AttendanceRecord[]
+  offering      CourseOfferings  @relation(fields: [offeringId], references: [id])
+  records       AttendanceRecords[]
 
   @@map("attendance_sessions")
 }
 
-model AttendanceRecord {
+model AttendanceRecords {
   id          String           @id @default(uuid()) @db.Uuid
   sessionId   String           @map("session_id") @db.Uuid
   studentId   String           @map("student_id") @db.Uuid
@@ -656,8 +656,8 @@ model AttendanceRecord {
   createdAt   DateTime         @default(now()) @map("created_at")
 
   // Relations
-  session     AttendanceSession @relation(fields: [sessionId], references: [id])
-  student     Student           @relation(fields: [studentId], references: [id])
+  session     AttendanceSessions @relation(fields: [sessionId], references: [id])
+  student     Students           @relation(fields: [studentId], references: [id])
 
   @@unique([sessionId, studentId])
   @@map("attendance_records")
@@ -667,33 +667,33 @@ model AttendanceRecord {
 // 8. EXAMINATION
 // ==========================================
 
-model AssessmentType {
+model AssessmentTypes {
   id          String   @id @default(uuid()) @db.Uuid
   name        String   @unique @db.VarChar(100) // e.g., Continuous Assessment, Final Exam
   weightage   Int      // e.g., 40 (for 40%)
   createdAt   DateTime @default(now()) @map("created_at")
 
   // Relations
-  assessments Assessment[]
+  assessments Assessments[]
 
   @@map("assessment_types")
 }
 
-model Assessment {
-  id              String         @id @default(uuid()) @db.Uuid
-  assessmentTypeId String        @map("assessment_type_id") @db.Uuid
-  title           String         @db.VarChar(255)
-  maxMarks        Int            @map("max_marks")
-  createdAt       DateTime       @default(now()) @map("created_at")
+model Assessments {
+  id              String          @id @default(uuid()) @db.Uuid
+  assessmentTypeId String         @map("assessment_type_id") @db.Uuid
+  title           String          @db.VarChar(255)
+  maxMarks        Int             @map("max_marks")
+  createdAt       DateTime        @default(now()) @map("created_at")
 
   // Relations
-  assessmentType  AssessmentType @relation(fields: [assessmentTypeId], references: [id])
-  grades          Grade[]
+  assessmentType  AssessmentTypes @relation(fields: [assessmentTypeId], references: [id])
+  grades          Grades[]
 
   @@map("assessments")
 }
 
-model Grade {
+model Grades {
   id            String       @id @default(uuid()) @db.Uuid
   enrollmentId  String       @map("enrollment_id") @db.Uuid
   assessmentId  String       @map("assessment_id") @db.Uuid
@@ -705,16 +705,16 @@ model Grade {
   updatedAt     DateTime     @updatedAt @map("updated_at")
 
   // Relations
-  enrollment    Enrollment   @relation(fields: [enrollmentId], references: [id])
-  assessment    Assessment   @relation(fields: [assessmentId], references: [id])
-  semester      Semester     @relation(fields: [semesterId], references: [id])
-  changes       GradeChange[]
+  enrollment    Enrollments  @relation(fields: [enrollmentId], references: [id])
+  assessment    Assessments  @relation(fields: [assessmentId], references: [id])
+  semester      Semesters    @relation(fields: [semesterId], references: [id])
+  changes       GradeChanges[]
 
   @@unique([enrollmentId, assessmentId])
   @@map("grades")
 }
 
-model GradeChange {
+model GradeChanges {
   id          String     @id @default(uuid()) @db.Uuid
   gradeId     String     @map("grade_id") @db.Uuid
   oldMarks    Decimal    @map("old_marks") @db.Decimal(5,2)
@@ -724,7 +724,7 @@ model GradeChange {
   createdAt   DateTime   @default(now()) @map("created_at")
 
   // Relations
-  grade       Grade      @relation(fields: [gradeId], references: [id])
+  grade       Grades     @relation(fields: [gradeId], references: [id])
 
   @@map("grade_changes")
 }
@@ -733,7 +733,7 @@ model GradeChange {
 // 9. TIMETABLE
 // ==========================================
 
-model Building {
+model Buildings {
   id          String   @id @default(uuid()) @db.Uuid
   name        String   @unique @db.VarChar(255)
   code        String   @unique @db.VarChar(50)
@@ -741,12 +741,12 @@ model Building {
   updatedAt   DateTime @updatedAt @map("updated_at")
 
   // Relations
-  rooms       Room[]
+  rooms       Rooms[]
 
   @@map("buildings")
 }
 
-model Room {
+model Rooms {
   id          String   @id @default(uuid()) @db.Uuid
   name        String   @db.VarChar(255)
   code        String   @unique @db.VarChar(50)
@@ -756,14 +756,14 @@ model Room {
   updatedAt   DateTime @updatedAt @map("updated_at")
 
   // Relations
-  building    Building @relation(fields: [buildingId], references: [id])
-  timetables  Timetable[]
+  building    Buildings @relation(fields: [buildingId], references: [id])
+  timetables  Timetables[]
 
   @@unique([name, buildingId])
   @@map("rooms")
 }
 
-model Timetable {
+model Timetables {
   id          String   @id @default(uuid()) @db.Uuid
   classId     String   @map("class_id") @db.Uuid
   roomId      String?  @map("room_id") @db.Uuid
@@ -774,8 +774,8 @@ model Timetable {
   updatedAt   DateTime @updatedAt @map("updated_at")
 
   // Relations
-  class       Class    @relation(fields: [classId], references: [id])
-  room        Room?    @relation(fields: [roomId], references: [id])
+  class       Classes  @relation(fields: [classId], references: [id])
+  room        Rooms?   @relation(fields: [roomId], references: [id])
 
   @@map("timetables")
 }
@@ -784,7 +784,7 @@ model Timetable {
 // 10. COMMUNICATION
 // ==========================================
 
-model Announcement {
+model Announcements {
   id          String   @id @default(uuid()) @db.Uuid
   title       String   @db.VarChar(255)
   content     String   @db.Text
@@ -796,7 +796,7 @@ model Announcement {
   @@map("announcements")
 }
 
-model Notification {
+model Notifications {
   id          String           @id @default(uuid()) @db.Uuid
   userId      String           @map("user_id") @db.Uuid
   title       String           @db.VarChar(255)
@@ -806,12 +806,12 @@ model Notification {
   createdAt   DateTime         @default(now()) @map("created_at")
 
   // Relations
-  user        User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user        Users            @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("notifications")
 }
 
-model Message {
+model Messages {
   id          String   @id @default(uuid()) @db.Uuid
   senderId    String   @map("sender_id") @db.Uuid
   receiverId  String   @map("receiver_id") @db.Uuid
@@ -821,8 +821,8 @@ model Message {
   createdAt   DateTime @default(now()) @map("created_at")
 
   // Relations
-  sender      User     @relation("SentMessages", fields: [senderId], references: [id])
-  receiver    User     @relation("ReceivedMessages", fields: [receiverId], references: [id])
+  sender      Users    @relation("SentMessages", fields: [senderId], references: [id])
+  receiver    Users    @relation("ReceivedMessages", fields: [receiverId], references: [id])
 
   @@map("messages")
 }

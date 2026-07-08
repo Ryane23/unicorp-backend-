@@ -3,22 +3,23 @@ import { PrismaClient } from '@prisma/client';
 async function testConnection() {
   const prisma = new PrismaClient();
   try {
-    console.log('Testing database connectivity...');
+    console.log('Testing database connectivity (Pluralized Schema)...');
     await prisma.$connect();
     console.log('✅ Database connected successfully');
     
-    const userCount = await prisma.user.count();
+    const userCount = await prisma.users.count();
     console.log(`📊 Number of users in database: ${userCount}`);
     
-    const tables = ['User', 'Role', 'Permission', 'Faculty', 'Department', 'Program', 'Course'];
-    console.log('\nChecking schema models...');
-    for (const table of tables) {
+    // Updated table names to match pluralized schema
+    const models = ['users', 'roles', 'permissions', 'faculties', 'departments', 'programs', 'courses'];
+    console.log('\nChecking schema model accessibility...');
+    for (const model of models) {
       try {
         // @ts-ignore
-        await prisma[table.toLowerCase()].findFirst();
-        console.log(`✅ Model ${table} is accessible`);
+        await prisma[model].findFirst();
+        console.log(`✅ Property prisma.${model} is accessible`);
       } catch (err) {
-        console.log(`❌ Model ${table} error: ${err.message}`);
+        console.log(`❌ Property prisma.${model} error: ${err.message}`);
       }
     }
   } catch (err) {
