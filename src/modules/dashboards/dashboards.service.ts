@@ -12,6 +12,7 @@ export class DashboardsService {
       lecturers,
       staff,
       courses,
+      faculties,
       departments,
       programs,
       activeAcademicYear,
@@ -23,6 +24,7 @@ export class DashboardsService {
       this.prisma.lecturers.count({ where: { deletedAt: null } }),
       this.prisma.staff.count(),
       this.prisma.courses.count({ where: { deletedAt: null, isActive: true } }),
+      this.prisma.faculties.count({ where: { deletedAt: null } }),
       this.prisma.departments.count({ where: { deletedAt: null } }),
       this.prisma.programs.count({ where: { deletedAt: null } }),
       this.prisma.academicYears.findFirst({
@@ -42,7 +44,7 @@ export class DashboardsService {
 
     return {
       role: 'ADMIN',
-      metrics: { students, lecturers, staff, courses, departments, programs },
+      metrics: { students, lecturers, staff, courses, faculties, departments, programs },
       academicPeriod: activeAcademicYear
         ? {
             year: activeAcademicYear.name,

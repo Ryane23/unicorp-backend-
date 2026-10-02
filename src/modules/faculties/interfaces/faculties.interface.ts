@@ -1,6 +1,8 @@
 export interface IFaculties {
   id: string;
-  tenantId: string;
+  name: string;
+  code: string;
+  description?: string | null;
   createdAt: Date;
   updatedAt: Date;
 }

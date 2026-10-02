@@ -17,6 +17,8 @@ import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
 import { StudentsModule } from './modules/students/students.module';
 import { DashboardsModule } from './modules/dashboards/dashboards.module';
+import { FacultiesModule } from './modules/faculties/faculties.module';
+import { DepartmentsModule } from './modules/departments/departments.module';
 import { HealthController } from './shared/health.controller';
 
 @Module({
@@ -34,6 +36,8 @@ import { HealthController } from './shared/health.controller';
     UsersModule,
     StudentsModule,
     DashboardsModule,
+    FacultiesModule,
+    DepartmentsModule,
   ],
   controllers: [HealthController],
   providers: [
