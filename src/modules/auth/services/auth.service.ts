@@ -7,6 +7,7 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { v4 as uuidv4 } from 'uuid';
+import { randomBytes } from 'crypto';
 import { AuthRepository } from '../repositories/auth.repository';
 import { SessionStoreService } from '@/infrastructure/redis/session-store.service';
 import {
@@ -16,13 +17,22 @@ import {
   ResetPasswordDto,
   RegisterDto,
 } from '../dto/auth.dto';
-import { UserType } from '@prisma/client';
+import { UserStatus, UserType } from '@prisma/client';
 
 export interface TokenPair {
   accessToken: string;
   refreshToken: string;
   expiresIn: string;
   sessionId: string;
+  user: {
+    id: string;
+    email: string;
+    firstName: string;
+    lastName: string;
+    userType: UserType;
+  };
+  roles: string[];
+  permissions: string[];
 }
 
 export interface AuthUserPayload {
@@ -56,14 +66,12 @@ export class AuthService {
       passwordHash,
       firstName,
       lastName,
-      userType: (dto.role?.toUpperCase() as UserType) || UserType.STUDENT,
+      userType: UserType.STUDENT,
     });
 
-    if (dto.role) {
-      const role = await this.authRepo.findRoleBySlug(dto.role.toLowerCase());
-      if (role) {
-        await this.authRepo.assignRoleToUser(user.id, role.id);
-      }
+    const role = await this.authRepo.findRoleBySlug('STUDENT');
+    if (role) {
+      await this.authRepo.assignRoleToUser(user.id, role.id);
     }
 
     return this.issueTokens(user);
@@ -87,16 +95,7 @@ export class AuthService {
   async login(dto: LoginDto, ip: string, userAgent?: string): Promise<TokenPair> {
     const user = await this.authRepo.findUserByEmail(dto.email);
 
-    if (!user) {
-      await this.authRepo.createLoginHistory({
-        userId: '00000000-0000-0000-0000-000000000000',
-        ipAddress: ip,
-        userAgent,
-        success: false,
-        failReason: 'User not found',
-      });
-      throw new UnauthorizedException('Invalid credentials');
-    }
+    if (!user) throw new UnauthorizedException('Invalid credentials');
 
     const valid = await this.authRepo.comparePassword(dto.password, user.passwordHash);
     if (!valid) {
@@ -110,8 +109,8 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    if (user.status === 'SUSPENDED') {
-      throw new ForbiddenException('Account suspended');
+    if (user.status !== UserStatus.ACTIVE) {
+      throw new ForbiddenException('Account is not active');
     }
 
     const tokens = await this.issueTokens(user, ip, userAgent);
@@ -172,10 +171,17 @@ export class AuthService {
     return { message: 'Password reset successfully' };
   }
 
+  getActiveSessions(userId: string) {
+    return this.authRepo.findActiveSessions(userId);
+  }
+
   private async issueTokens(
     user: {
       id: string;
       email: string;
+      firstName: string;
+      lastName: string;
+      userType: UserType;
     },
     ip?: string,
     userAgent?: string,
@@ -198,7 +204,7 @@ export class AuthService {
       expiresIn: accessExpiresIn,
     });
 
-    const refreshToken = uuidv4();
+    const refreshToken = randomBytes(48).toString('hex');
     const refreshExpiry = this.parseExpiry(refreshExpiresIn);
 
     await this.authRepo.createRefreshToken({
@@ -225,9 +231,23 @@ export class AuthService {
       ipAddress: ip,
       userAgent,
       createdAt: new Date().toISOString(),
-    } as any);
+    });
 
-    return { accessToken, refreshToken, expiresIn: accessExpiresIn, sessionId };
+    return {
+      accessToken,
+      refreshToken,
+      expiresIn: accessExpiresIn,
+      sessionId,
+      user: {
+        id: user.id,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        userType: user.userType,
+      },
+      roles,
+      permissions,
+    };
   }
 
   private parseExpiry(exp: string): Date {

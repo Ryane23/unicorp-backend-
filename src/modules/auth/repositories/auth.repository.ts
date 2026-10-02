@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@/database/prisma.service';
 import * as bcrypt from 'bcrypt';
-import { UserType } from '@prisma/client';
+import { createHash } from 'crypto';
+import { UserStatus, UserType } from '@prisma/client';
 
 @Injectable()
 export class AuthRepository {
@@ -27,7 +28,9 @@ export class AuthRepository {
     lastName: string;
     userType: UserType;
   }) {
-    return this.prisma.users.create({ data });
+    return this.prisma.users.create({
+      data: { ...data, status: UserStatus.ACTIVE },
+    });
   }
 
   async findRoleBySlug(slug: string) {
@@ -49,18 +52,20 @@ export class AuthRepository {
     ipAddress?: string;
     userAgent?: string;
   }) {
-    return this.prisma.refreshTokens.create({ data });
+    return this.prisma.refreshTokens.create({
+      data: { ...data, token: this.hashToken(data.token) },
+    });
   }
 
   async findRefreshToken(token: string) {
     return this.prisma.refreshTokens.findFirst({
-      where: { token, revoked: false, expiresAt: { gt: new Date() } },
+      where: { token: this.hashToken(token), revoked: false, expiresAt: { gt: new Date() } },
     });
   }
 
   async revokeRefreshToken(token: string) {
     return this.prisma.refreshTokens.updateMany({
-      where: { token },
+      where: { token: this.hashToken(token) },
       data: { revoked: true, revokedAt: new Date() },
     });
   }
@@ -106,12 +111,14 @@ export class AuthRepository {
     token: string;
     expiresAt: Date;
   }) {
-    return this.prisma.passwordResets.create({ data });
+    return this.prisma.passwordResets.create({
+      data: { ...data, token: this.hashToken(data.token) },
+    });
   }
 
   async findPasswordReset(token: string) {
     return this.prisma.passwordResets.findFirst({
-      where: { token, usedAt: null, expiresAt: { gt: new Date() } },
+      where: { token: this.hashToken(token), usedAt: null, expiresAt: { gt: new Date() } },
     });
   }
 
@@ -182,10 +189,30 @@ export class AuthRepository {
     return roles.map((r) => r.slug);
   }
 
+  async findActiveSessions(userId: string) {
+    return this.prisma.sessions.findMany({
+      where: { userId, isActive: true, expiresAt: { gt: new Date() } },
+      select: {
+        sessionId: true,
+        ipAddress: true,
+        userAgent: true,
+        device: true,
+        lastActivity: true,
+        createdAt: true,
+        expiresAt: true,
+      },
+      orderBy: { lastActivity: 'desc' },
+    });
+  }
+
   async updateLastLogin(userId: string, ip: string) {
     return this.prisma.users.update({
       where: { id: userId },
       data: { lastLoginAt: new Date(), lastLoginIp: ip },
     });
+  }
+
+  private hashToken(token: string): string {
+    return createHash('sha256').update(token).digest('hex');
   }
 }

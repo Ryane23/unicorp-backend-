@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication, ValidationPipe, VersioningType } from '@nestjs/common';
+import { INestApplication, ValidationPipe } from '@nestjs/common';
 import request = require('supertest');
 import { AppModule } from '../src/app.module';
 import { PrismaService } from '../src/database/prisma.service';
@@ -15,9 +15,8 @@ describe('Authentication (e2e)', () => {
 
     app = moduleFixture.createNestApplication();
     
-    // Add prefix and versioning to match main.ts configuration
+    // Add prefix to match main.ts configuration.
     app.setGlobalPrefix('api/v1');
-    app.enableVersioning({ type: VersioningType.URI, defaultVersion: '1' });
 
     app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
     prisma = moduleFixture.get<PrismaService>(PrismaService);
@@ -37,24 +36,24 @@ describe('Authentication (e2e)', () => {
     email: 'test@example.com',
     password: 'SecurePassword123!',
     username: 'testuser',
-    role: 'STUDENT',
   };
 
   it('/auth/register (POST) - should register a new user', () => {
     return request(app.getHttpServer())
-      .post('/api/v1/v1/auth/register')
+      .post('/api/v1/auth/register')
       .send(testUser)
       .expect(201)
       .expect((res) => {
         expect(res.body.data).toHaveProperty('accessToken');
         expect(res.body.data).toHaveProperty('refreshToken');
         expect(res.body.data.expiresIn).toBe('15m');
+        expect(res.body.data.roles).toContain('STUDENT');
       });
   });
 
   it('/auth/login (POST) - should login with registered user', () => {
     return request(app.getHttpServer())
-      .post('/api/v1/v1/auth/login')
+      .post('/api/v1/auth/login')
       .send({
         email: testUser.email,
         password: testUser.password,
@@ -68,7 +67,7 @@ describe('Authentication (e2e)', () => {
 
   it('/auth/me (GET) - should get current user profile', async () => {
     const loginRes = await request(app.getHttpServer())
-      .post('/api/v1/v1/auth/login')
+      .post('/api/v1/auth/login')
       .send({
         email: testUser.email,
         password: testUser.password,
@@ -77,7 +76,7 @@ describe('Authentication (e2e)', () => {
     const token = loginRes.body.data.accessToken;
 
     return request(app.getHttpServer())
-      .get('/api/v1/v1/auth/me')
+      .get('/api/v1/auth/me')
       .set('Authorization', `Bearer ${token}`)
       .expect(200)
       .expect((res) => {
@@ -89,7 +88,7 @@ describe('Authentication (e2e)', () => {
 
   it('/auth/login (POST) - should fail with wrong password', () => {
     return request(app.getHttpServer())
-      .post('/api/v1/v1/auth/login')
+      .post('/api/v1/auth/login')
       .send({
         email: testUser.email,
         password: 'WrongPassword!',

@@ -13,7 +13,9 @@ services:
           memory: 2G
     environment:
       NODE_ENV: production
+      PORT: 4000
       DATABASE_URL: ${DATABASE_URL}
+      REDIS_ENABLED: 'true'
       REDIS_HOST: ${REDIS_HOST}
       JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET}
       JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET}
@@ -28,5 +30,6 @@ services:
     environment:
       NODE_ENV: production
       DATABASE_URL: ${DATABASE_URL}
+      REDIS_ENABLED: 'true'
       REDIS_HOST: ${REDIS_HOST}
     restart: always

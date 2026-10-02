@@ -13,7 +13,7 @@ export class HealthController {
   @Public()
   @Get()
   async check() {
-    const checks = { database: 'ok', redis: 'ok' };
+    const checks = { database: 'ok', redis: this.redis.enabled ? 'ok' : 'memory' };
 
     try {
       await this.prisma.$queryRaw`SELECT 1`;
@@ -22,12 +22,12 @@ export class HealthController {
     }
 
     try {
-      await this.redis.getClient().ping();
+      await this.redis.ping();
     } catch {
       checks.redis = 'error';
     }
 
-    const healthy = Object.values(checks).every((v) => v === 'ok');
+    const healthy = checks.database === 'ok' && ['ok', 'memory'].includes(checks.redis);
     return { status: healthy ? 'healthy' : 'degraded', checks, timestamp: new Date().toISOString() };
   }
 }

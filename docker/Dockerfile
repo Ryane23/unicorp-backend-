@@ -1,5 +1,5 @@
 # Build stage
-FROM node:20-alpine AS builder
+FROM node:22-alpine AS builder
 
 WORKDIR /app
 
@@ -12,7 +12,7 @@ RUN npx prisma generate
 RUN npm run build
 
 # Production stage
-FROM node:20-alpine AS production
+FROM node:22-alpine AS production
 
 WORKDIR /app
 
@@ -27,9 +27,9 @@ COPY --from=builder /app/prisma ./prisma
 
 USER nestjs
 
-EXPOSE 3000
+EXPOSE 4000
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-  CMD wget -qO- http://localhost:3000/api/v1/health || exit 1
+  CMD wget -qO- http://localhost:4000/api/v1/health || exit 1
 
 CMD ["node", "dist/main.js"]

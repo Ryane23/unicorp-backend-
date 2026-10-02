@@ -59,13 +59,4 @@ export class RegisterDto {
   @MinLength(8)
   password!: string;
 
-  @ApiPropertyOptional({ example: 'STUDENT', description: 'Assigned role/type' })
-  @IsOptional()
-  @IsString()
-  role?: string;
-
-  @ApiPropertyOptional({ description: 'Department identification' })
-  @IsOptional()
-  @IsString()
-  department?: string;
 }

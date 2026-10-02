@@ -1,13 +1,15 @@
-import { SetMetadata } from '@nestjs/common';
+import { createParamDecorator, ExecutionContext, SetMetadata } from '@nestjs/common';
 
 export const PERMISSIONS_KEY = 'permissions';
+export const ROLES_KEY = 'roles';
+
 export const RequirePermissions = (...permissions: string[]) =>
   SetMetadata(PERMISSIONS_KEY, permissions);
 
+export const RequireRoles = (...roles: string[]) => SetMetadata(ROLES_KEY, roles);
+
 export const Public = () => SetMetadata('isPublic', true);
 
-export const CurrentUser = () => {
-  return (target: object, key: string | symbol, index: number) => {
-    // Parameter decorator placeholder - use @Req() req and req.user in controllers
-  };
-};
+export const CurrentUser = createParamDecorator(
+  (_data: unknown, context: ExecutionContext) => context.switchToHttp().getRequest().user,
+);

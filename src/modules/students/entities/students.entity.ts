@@ -1,6 +1,7 @@
 export class StudentsEntity {
   id!: string;
-  tenantId!: string;
+  userId!: string;
+  studentNo!: string;
   createdAt!: Date;
   updatedAt!: Date;
   deletedAt?: Date | null;

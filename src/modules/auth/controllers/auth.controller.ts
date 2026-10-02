@@ -18,8 +18,9 @@ import {
   ResetPasswordDto,
   RegisterDto,
 } from '../dto/auth.dto';
-import { Public } from '@/common/decorators/permissions.decorator';
+import { CurrentUser, Public } from '@/common/decorators/permissions.decorator';
 import { JwtAuthGuard } from '@/guards/jwt-auth.guard';
+import { AuthUserPayload } from '../services/auth.service';
 
 @ApiTags('Authentication')
 @Controller('auth')
@@ -79,15 +80,15 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'List active sessions' })
-  getSessions(@Req() req: Request) {
-    return this.authService.getActiveSessions(req.user!.sub);
+  getSessions(@CurrentUser() user: AuthUserPayload) {
+    return this.authService.getActiveSessions(user.sub);
   }
 
   @Get('me')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get current user profile' })
-  getMe(@Req() req: Request) {
-    return this.authService.getProfile(req.user!.sub);
+  getMe(@CurrentUser() user: AuthUserPayload) {
+    return this.authService.getProfile(user.sub);
   }
 }

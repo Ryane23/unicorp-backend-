@@ -2,7 +2,7 @@ export default () => ({
   app: {
     name: process.env.APP_NAME || 'UniCore ERP',
     env: process.env.NODE_ENV || 'development',
-    port: parseInt(process.env.PORT || '3000', 10),
+    port: parseInt(process.env.PORT || '4000', 10),
     apiPrefix: process.env.API_PREFIX || 'api/v1',
     url: process.env.APP_URL || 'http://localhost:3000',
   },
@@ -10,6 +10,7 @@ export default () => ({
     url: process.env.DATABASE_URL,
   },
   redis: {
+    enabled: process.env.REDIS_ENABLED !== 'false',
     host: process.env.REDIS_HOST || 'localhost',
     port: parseInt(process.env.REDIS_PORT || '6379', 10),
     password: process.env.REDIS_PASSWORD || undefined,

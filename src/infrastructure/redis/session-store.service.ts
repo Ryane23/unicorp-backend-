@@ -4,7 +4,6 @@ import { RedisService } from './redis.service';
 
 export interface SessionData {
   userId: string;
-  tenantId: string;
   ipAddress?: string;
   userAgent?: string;
   device?: string;

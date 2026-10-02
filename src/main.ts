@@ -1,10 +1,10 @@
 import { NestFactory } from '@nestjs/core';
-import { ValidationPipe, VersioningType } from '@nestjs/common';
+import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import helmet from 'helmet';
-import compression from 'compression';
-import cookieParser from 'cookie-parser';
+import compression = require('compression');
+import cookieParser = require('cookie-parser');
 import { AppModule } from './app.module';
 
 async function bootstrap() {
@@ -18,7 +18,6 @@ async function bootstrap() {
   const corsOrigins = config.get<string[]>('cors.origins', []);
 
   app.setGlobalPrefix(apiPrefix);
-  app.enableVersioning({ type: VersioningType.URI, defaultVersion: '1' });
 
   app.use(helmet());
   app.use(compression());
@@ -45,7 +44,6 @@ async function bootstrap() {
     .setDescription('University Enterprise Resource Planning System - REST API Documentation')
     .setVersion('1.0')
     .addBearerAuth()
-    .addApiKey({ type: 'apiKey', name: 'x-tenant-id', in: 'header' }, 'tenant-id')
     .addTag('Authentication', 'Login, logout, refresh tokens, 2FA')
     .addTag('Students', 'Student records and management')
     .addTag('Admissions', 'Online applications and admission workflow')

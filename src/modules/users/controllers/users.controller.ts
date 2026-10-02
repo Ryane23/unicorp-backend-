@@ -16,35 +16,35 @@ export class UsersController {
 
   @Get()
   @ApiOperation({ summary: 'List all users' })
-  @RequirePermissions('users:read')
+  @RequirePermissions('users.read')
   findAll(@Query() query: PaginationDto) {
     return this.usersService.findAll(query);
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get users by ID' })
-  @RequirePermissions('users:read')
+  @RequirePermissions('users.read')
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.usersService.findOne(id);
   }
 
   @Post()
   @ApiOperation({ summary: 'Create users' })
-  @RequirePermissions('users:create')
+  @RequirePermissions('users.create')
   create(@Body() dto: CreateUsersDto) {
     return this.usersService.create(dto);
   }
 
   @Put(':id')
   @ApiOperation({ summary: 'Update users' })
-  @RequirePermissions('users:update')
+  @RequirePermissions('users.update')
   update(@Param('id', ParseUUIDPipe) id: string, @Body() dto: UpdateUsersDto) {
     return this.usersService.update(id, dto);
   }
 
   @Delete(':id')
   @ApiOperation({ summary: 'Delete users' })
-  @RequirePermissions('users:delete')
+  @RequirePermissions('users.delete')
   remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.usersService.remove(id);
   }

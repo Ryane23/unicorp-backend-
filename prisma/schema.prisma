@@ -113,6 +113,7 @@ model Users {
   administrator   Administrators?
   staff           Staff?
   roles           UserRoles[]
+  directPermissions UserPermissions[]
   refreshTokens   RefreshTokens[]
   sessions        Sessions[]
   passwordResets  PasswordResets[]
@@ -489,6 +490,7 @@ model Courses {
   prerequisites CoursePrerequisites[] @relation("CourseMain")
   requiredFor   CoursePrerequisites[] @relation("CourseRequired")
   offerings     CourseOfferings[]
+  assignments   CourseAssignments[]
 
   @@map("courses")
 }

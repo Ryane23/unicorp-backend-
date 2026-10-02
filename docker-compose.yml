@@ -6,10 +6,12 @@ services:
       context: .
       dockerfile: docker/Dockerfile
     ports:
-      - '3000:3000'
+      - '4000:4000'
     environment:
       NODE_ENV: development
+      PORT: 4000
       DATABASE_URL: postgresql://unicore:unicore_secret@postgres:5432/unicore_erp?schema=public
+      REDIS_ENABLED: 'true'
       REDIS_HOST: redis
       REDIS_PORT: 6379
       JWT_ACCESS_SECRET: dev-access-secret-change-in-production-min-32
@@ -30,6 +32,7 @@ services:
     environment:
       NODE_ENV: development
       DATABASE_URL: postgresql://unicore:unicore_secret@postgres:5432/unicore_erp?schema=public
+      REDIS_ENABLED: 'true'
       REDIS_HOST: redis
       REDIS_PORT: 6379
     depends_on:

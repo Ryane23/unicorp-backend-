@@ -1,125 +1,96 @@
-# UniCore ERP
+# UniCore ERP Backend
 
-Production-ready University Enterprise Resource Planning backend built with NestJS, PostgreSQL, Prisma, Redis, and BullMQ.
+Single-university ERP API built with NestJS, Prisma, PostgreSQL, JWT authentication, and database-backed RBAC.
 
-## Quick Start
+## Requirements
+
+- Node.js 22 (see `.nvmrc`)
+- PostgreSQL 14+
+- Redis 7 for shared production sessions; development can use the in-memory fallback
+
+## Quick start
 
 ```bash
-# Install dependencies
-npm install
-
-# Generate Prisma client (460 models)
-npx prisma generate
-
-# Start infrastructure
-docker compose up -d postgres redis
-
-# Run migrations
-npx prisma migrate dev
-
-# Seed database
+npm ci
+cp .env.example .env
+npm run prisma:generate
+npm run prisma:migrate:prod
 npm run prisma:seed
-
-# Start API (development)
 npm run start:dev
-
-# Start BullMQ worker
-npm run start:worker
 ```
 
-- **API**: http://localhost:3000/api/v1
-- **Swagger**: http://localhost:3000/docs
+- API: `http://localhost:4000/api/v1`
+- Swagger: `http://localhost:4000/docs`
+- Health: `http://localhost:4000/api/v1/health`
 
-## Architecture
+For the local in-memory session store, set `REDIS_ENABLED=false`. Production must set it to `true` and provide Redis connection settings.
 
-```
-src/
-├── modules/          # 32 domain modules (Clean Architecture)
-├── common/           # Shared context, decorators
-├── infrastructure/   # Redis, WebSocket
-├── database/         # Prisma service
-├── config/           # Environment configuration
-├── events/           # Domain events + listeners
-├── queues/           # BullMQ processors
-├── middleware/       # Tenant isolation
-├── guards/           # JWT, RBAC, Tenant
-├── interceptors/     # Transform, logging, audit
-├── filters/          # Global exception handling
-└── shared/           # DTOs, health checks
-```
+## Active architecture
 
-Each module follows:
+`prisma/schema.prisma` is the source of truth. It contains 42 connected models for:
 
-```
-module/
-├── controllers/
-├── services/
-├── repositories/
-├── dto/
-├── entities/
-├── interfaces/
-├── events/
-└── module.ts
-```
+- users, sessions, roles, and permissions;
+- faculties, departments, programs, academic years, semesters, and levels;
+- students, lecturers, administrators, and staff;
+- courses, classes, enrollments, attendance, assessments, grades, and timetables;
+- announcements, notifications, messages, and audit logs.
 
-## Database
+The older generated 460-model files under `prisma/schema.full.prisma` and `prisma/schemas/` are retained only as historical references. They are not used by Prisma or the running application.
 
-- **460 tables** across 30 schema domains
-- Multi-tenant with `tenant_id` on every business table
-- Soft deletes via `deleted_at`
-- Audit fields: `created_by`, `updated_by`, `created_at`, `updated_at`
+UniCore currently represents one university. Requests do not use tenant IDs or `x-tenant-id` headers.
 
-Regenerate schema from definitions:
+## Available endpoints
 
-```bash
-node scripts/generate-prisma-schema.ts
-```
-
-## API Endpoints
-
-| Module | Base Path |
-|--------|-----------|
-| Auth | `/api/v1/auth` |
+| Capability | Path |
+| --- | --- |
+| Authentication | `/api/v1/auth` |
 | Users | `/api/v1/users` |
 | Students | `/api/v1/students` |
-| Admissions | `/api/v1/admissions` |
-| Courses | `/api/v1/courses` |
-| Results | `/api/v1/results` |
-| Finance | `/api/v1/finance` |
-| Library | `/api/v1/library` |
-| Hostel | `/api/v1/hostel` |
-| Payroll | `/api/v1/payroll` |
-| Reports | `/api/v1/reports` |
+| Admin dashboard | `/api/v1/dashboards/admin` |
+| Registrar dashboard | `/api/v1/dashboards/registrar` |
+| HOD dashboard | `/api/v1/dashboards/hod` |
+| Lecturer dashboard | `/api/v1/dashboards/lecturer` |
+| Student dashboard | `/api/v1/dashboards/student` |
+| Staff dashboard | `/api/v1/dashboards/staff` |
 
-All requests require `Authorization: Bearer <token>` and `x-tenant-id` header.
+Dashboard routes enforce both role and permission requirements. HOD, lecturer, and student responses are scoped to the authenticated user's database profile.
 
-## Security
+## Development accounts
 
-- JWT access + refresh tokens
-- BCrypt password hashing (12 rounds)
-- RBAC with role inheritance
-- 2FA (TOTP via otplib)
-- Rate limiting (Throttler)
-- Helmet, CORS, CSRF-ready
-- Redis session store
-- Global audit logging
+`npm run prisma:seed` creates demonstration accounts for every supported role. Their password comes from `DEMO_PASSWORD`; the development fallback is `ChangeMe123!`.
 
-## Deployment
-
-See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) for cloud and on-premise deployment.
-
-```bash
-docker compose up -d          # Full stack (dev)
-docker compose -f docker-compose.prod.yml up -d  # Production
+```text
+superadmin@unicore.edu
+admin@unicore.edu
+registrar@unicore.edu
+hod@unicore.edu
+lecturer@unicore.edu
+student@unicore.edu
+staff@unicore.edu
 ```
 
-## Documentation
+Never use the fallback password in production.
 
-- [Architecture](docs/ARCHITECTURE.md)
-- [Deployment](docs/DEPLOYMENT.md)
-- [Disaster Recovery](docs/DISASTER_RECOVERY.md)
-- [API Reference](http://localhost:3000/docs) (Swagger)
+## Validation
 
-## License
+```bash
+npx prisma validate
+npm run build
+npm run test:e2e -- --runInBand
+```
 
-Proprietary - UniCore Team
+## Docker
+
+The API listens on port `4000`.
+
+```bash
+docker compose up -d postgres redis api
+```
+
+## Security notes
+
+- Passwords use bcrypt with 12 rounds.
+- Refresh and password-reset tokens are hashed before database storage.
+- JWT access tokens carry database-derived roles and permissions.
+- Role and permission guards run globally.
+- Responses never select password hashes from user-management queries.

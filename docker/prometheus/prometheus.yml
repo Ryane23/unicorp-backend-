@@ -5,7 +5,7 @@ global:
 scrape_configs:
   - job_name: 'unicore-api'
     static_configs:
-      - targets: ['api:3000']
+      - targets: ['api:4000']
     metrics_path: /metrics
 
   - job_name: 'postgres'
