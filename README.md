@@ -21,6 +21,8 @@ npm run start:dev
 
 - API: `http://localhost:4000/api/v1`
 - Swagger: `http://localhost:4000/docs`
+- OpenAPI JSON: `http://localhost:4000/docs-json`
+- OpenAPI YAML: `http://localhost:4000/docs-yaml`
 - Health: `http://localhost:4000/api/v1/health`
 
 For the local in-memory session store, set `REDIS_ENABLED=false`. Production must set it to `true` and provide Redis connection settings.
@@ -46,6 +48,8 @@ UniCore currently represents one university. Requests do not use tenant IDs or `
 | Authentication | `/api/v1/auth` |
 | Users | `/api/v1/users` |
 | Students | `/api/v1/students` |
+| Faculties | `/api/v1/faculties` |
+| Departments | `/api/v1/departments` |
 | Admin dashboard | `/api/v1/dashboards/admin` |
 | Registrar dashboard | `/api/v1/dashboards/registrar` |
 | HOD dashboard | `/api/v1/dashboards/hod` |
@@ -71,11 +75,57 @@ staff@unicore.edu
 
 Never use the fallback password in production.
 
+### Seeded Admin dashboard
+
+Run the migrations and seed, then sign in through the frontend:
+
+```bash
+npm run prisma:migrate:prod
+npm run prisma:seed
+```
+
+| Item | Development value |
+| --- | --- |
+| Frontend login | `http://localhost:3000/#/login` |
+| Admin dashboard | `http://localhost:3000/#/admin/dashboard` |
+| Email | `admin@unicore.edu` |
+| Password | `ChangeMe123!` or the value of `DEMO_PASSWORD` |
+
+The seed is idempotent. It creates the Admin role and permissions plus the faculty, department, programme, student, lecturer, course, attendance, grade, timetable, and announcement records used by the Admin dashboard.
+
+## Swagger workflow
+
+1. Start the API and open `http://localhost:4000/docs`.
+2. Expand **Authentication** and execute `POST /api/v1/auth/login` with the seeded Admin credentials.
+3. Copy `data.accessToken` from the response.
+4. Select **Authorize**, paste the token, and execute protected endpoints.
+
+Swagger documents the currently mounted API modules only. The raw OpenAPI document is available at `/docs-json` for Postman, Insomnia, SDK generation, and automated contract checks.
+
+## Database persistence proof
+
+After running the seed, execute:
+
+```bash
+npm run test:db
+```
+
+The test performs a real PostgreSQL write/read cycle:
+
+1. connects and runs `SELECT 1`;
+2. inserts a uniquely named temporary faculty;
+3. reads the exact row back and prints its ID, code, name, and timestamp;
+4. verifies the seeded Admin role and dashboard source counts;
+5. removes only the temporary probe record.
+
+The command exits non-zero if persistence, seeded Admin access, or dashboard source data cannot be verified.
+
 ## Validation
 
 ```bash
 npx prisma validate
 npm run build
+npm run test:db
 npm run test:e2e -- --runInBand
 ```
 
@@ -94,3 +144,8 @@ docker compose up -d postgres redis api
 - JWT access tokens carry database-derived roles and permissions.
 - Role and permission guards run globally.
 - Responses never select password hashes from user-management queries.
+
+## Repositories
+
+- Backend: [Ryane23/unicorp-backend-](https://github.com/Ryane23/unicorp-backend-)
+- Frontend: [CarlTeclancing/unicore-frontend](https://github.com/CarlTeclancing/unicore-frontend)

@@ -171,7 +171,8 @@ async function main() {
   console.log('Seeding UniCore ERP single-university development data...');
 
   const roles = await seedAuthorization();
-  const passwordHash = await bcrypt.hash(process.env.DEMO_PASSWORD || 'ChangeMe123!', 12);
+  const demoPassword = process.env.DEMO_PASSWORD || 'ChangeMe123!';
+  const passwordHash = await bcrypt.hash(demoPassword, 12);
 
   const faculty = await prisma.faculties.upsert({
     where: { code: 'FET' },
@@ -403,8 +404,29 @@ async function main() {
     });
   }
 
-  console.log('Seed complete. DEMO_PASSWORD defaults to ChangeMe123! for development only.');
-  console.log('Demo accounts: superadmin, admin, registrar, hod, lecturer, student, staff @unicore.edu');
+  const dashboardCounts = await Promise.all([
+    prisma.students.count({ where: { deletedAt: null } }),
+    prisma.lecturers.count({ where: { deletedAt: null } }),
+    prisma.faculties.count({ where: { deletedAt: null } }),
+    prisma.departments.count({ where: { deletedAt: null } }),
+    prisma.programs.count({ where: { deletedAt: null } }),
+    prisma.courses.count({ where: { deletedAt: null, isActive: true } }),
+  ]);
+
+  console.log('Seed complete. The Admin dashboard is ready.');
+  console.table([{
+    login: 'admin@unicore.edu',
+    password: process.env.DEMO_PASSWORD ? 'value from DEMO_PASSWORD' : 'ChangeMe123!',
+    students: dashboardCounts[0],
+    lecturers: dashboardCounts[1],
+    faculties: dashboardCounts[2],
+    departments: dashboardCounts[3],
+    programmes: dashboardCounts[4],
+    courses: dashboardCounts[5],
+  }]);
+  console.log('Other demo accounts: superadmin, registrar, hod, lecturer, student, staff @unicore.edu');
+  console.log('Swagger login: POST http://localhost:4000/api/v1/auth/login');
+  console.log('Admin dashboard: http://localhost:3000/#/admin/dashboard');
 }
 
 main()
